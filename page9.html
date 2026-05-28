@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>09 · Anomalies & Aides — Musée de l'Audition</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@200;300;400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #f4f0e8; --warm-white: #faf8f4; --ink: #1a1410;
+      --brown: #5c3d2e; --gold: #b8960c; --gold-light: #d4b44a;
+      --muted: #8a7968; --line: #d8d0c0;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Josefin Sans', sans-serif; background: var(--warm-white); color: var(--ink); overflow-x: hidden; }
+
+    /* NAV */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(26,20,16,0.97); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(184,150,12,0.2); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 3.5rem; }
+    .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-style: italic; color: var(--gold-light); letter-spacing: 0.05em; text-decoration: none; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--gold-light); }
+
+    /* PAGE HEADER */
+    .page-header { background: var(--ink); padding: 5rem 2rem 4rem; position: relative; overflow: hidden; }
+    .page-header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 80% at 80% 50%, rgba(92,61,46,0.3) 0%, transparent 60%); }
+    .page-num { font-family: 'Cormorant Garamond', serif; font-size: 8rem; font-weight: 300; color: rgba(184,150,12,0.12); line-height: 1; position: absolute; right: 2rem; bottom: -1rem; }
+    .page-header-content { max-width: 700px; position: relative; }
+    .chapter-label { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.5rem; }
+    .page-header h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 300; color: var(--cream); line-height: 1.1; }
+    .page-header h1 em { font-style: italic; color: var(--gold-light); }
+    .page-intro { margin-top: 1.5rem; font-size: 0.8rem; letter-spacing: 0.06em; color: var(--muted); line-height: 1.8; max-width: 560px; }
+
+    /* SECTION NAV */
+    .section-nav { background: var(--cream); border-bottom: 1px solid var(--line); padding: 0 2rem; display: flex; gap: 0; overflow-x: auto; }
+    .section-nav a { padding: 1rem 1.5rem; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); text-decoration: none; white-space: nowrap; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s; }
+    .section-nav a:hover { color: var(--ink); border-color: var(--gold); }
+
+    /* LAYOUT */
+    main { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+    section.chapter { padding: 5rem 0; border-bottom: 1px solid var(--line); }
+    section.chapter:last-child { border-bottom: none; }
+    .section-label { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 2.5rem; display: flex; align-items: center; gap: 1rem; }
+    .section-label::after { content:''; flex:1; height:1px; background:var(--line); }
+    h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 300; line-height: 1.2; margin-bottom: 1.5rem; }
+    h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 400; margin-bottom: 1rem; color: var(--brown); }
+    p { font-size: 0.82rem; line-height: 1.85; color: #3d3028; max-width: 680px; letter-spacing: 0.03em; margin-bottom: 1rem; }
+    .gold-rule { width:3rem; height:1px; background:var(--gold); margin: 2rem 0; }
+
+    /* IMAGES */
+    .img-centered { display: block; margin: 2rem auto; max-width: 100%; border: 1.5px solid var(--line); }
+    .img-caption { text-align: center; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-top: 0.6rem; margin-bottom: 2rem; }
+
+    /* TWO-COL */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; margin: 2rem 0; }
+    @media(max-width:700px){ .two-col { grid-template-columns: 1fr; gap: 1.5rem; } }
+
+    /* CITATION */
+    .lsf-note { background: var(--cream); border-left: 3px solid var(--gold); padding: 1.5rem 2rem; margin: 2rem 0; font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-style: italic; color: var(--brown); line-height: 1.6; }
+
+    /* DEVICE CARDS */
+    .device-scroll { display: flex; gap: 2rem; overflow-x: auto; padding-bottom: 1rem; scroll-snap-type: x mandatory; }
+    .device-scroll::-webkit-scrollbar { height: 3px; }
+    .device-scroll::-webkit-scrollbar-track { background: var(--line); }
+    .device-scroll::-webkit-scrollbar-thumb { background: var(--gold); }
+    .device-card { min-width: 280px; max-width: 280px; border: 1.5px solid var(--line); background: var(--warm-white); scroll-snap-align: start; flex-shrink: 0; }
+    .device-card-img { width: 100%; aspect-ratio: 4/3; overflow: hidden; border-bottom: 1.5px solid var(--line); background: var(--cream); }
+    .device-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .device-card-body { padding: 1.5rem; }
+    .device-card-era { font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem; }
+    .device-card-name { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; margin-bottom: 0.75rem; color: var(--ink); }
+    .device-card-desc { font-size: 0.7rem; line-height: 1.75; color: var(--muted); letter-spacing: 0.04em; }
+
+    /* OREILLE INTERACTIVE */
+    .ear-diagram-wrap { position: relative; display: block; margin: 2rem auto; max-width: 600px; width: 100%; }
+    .ear-diagram-wrap img { width: 100%; display: block; border: 1.5px solid var(--line); }
+    .hotspot { position: absolute; width: 28px; height: 28px; border-radius: 50%; background: var(--gold); color: var(--ink); font-size: 0.65rem; font-weight: 600; font-family: 'Josefin Sans', sans-serif; display: flex; align-items: center; justify-content: center; cursor: pointer; transform: translate(-50%, -50%); transition: background 0.2s, transform 0.2s; box-shadow: 0 0 0 3px rgba(184,150,12,0.3); z-index: 10; border: none; }
+    .hotspot:hover, .hotspot.active { background: var(--ink); color: var(--gold-light); transform: translate(-50%,-50%) scale(1.15); }
+    .ear-info-box { margin-top: 1.5rem; padding: 1.5rem 2rem; background: var(--cream); border-left: 3px solid var(--gold); display: none; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .ear-info-box.visible { display: block; }
+    .ear-info-title { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--brown); }
+    .ear-info-text { font-size: 0.78rem; line-height: 1.75; color: #3d3028; }
+
+    /* TEST AUDITIF */
+    #test-auditif { background: var(--ink); border-radius: 2px; padding: 3rem; margin: 2rem 0; color: var(--cream); }
+    #test-auditif h3 { color: var(--gold-light); font-size: 1.5rem; margin-bottom: 0.5rem; }
+    #test-auditif p { color: rgba(244,240,232,0.7); max-width: 560px; }
+    .freq-bar-wrap { margin: 2.5rem 0 1.5rem; position: relative; }
+    .freq-labels { display: flex; justify-content: space-between; font-size: 0.58rem; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 0.5rem; }
+    .freq-track { position: relative; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; }
+    #freq-progress { position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: linear-gradient(to right, var(--gold), #e8c44a); border-radius: 3px; transition: width 0.1s linear; }
+    #freq-marker { position: absolute; top: 50%; transform: translate(-50%,-50%); width: 14px; height: 14px; border-radius: 50%; background: white; box-shadow: 0 0 0 3px var(--gold); transition: left 0.1s linear; left: 0%; }
+    .test-controls { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 2rem; }
+    .btn { padding: 0.75rem 2rem; font-family: 'Josefin Sans', sans-serif; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; border: none; cursor: pointer; transition: all 0.2s; }
+    .btn-primary { background: var(--gold); color: var(--ink); font-weight: 400; }
+    .btn-primary:hover { background: var(--gold-light); }
+    .btn-secondary { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--cream); }
+    .btn-secondary:hover { border-color: var(--gold); color: var(--gold-light); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    #test-freq-display { font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; font-weight: 300; color: var(--gold-light); margin-top: 1.5rem; min-height: 3rem; letter-spacing: 0.05em; }
+    #test-status { font-size: 0.7rem; letter-spacing: 0.1em; color: rgba(244,240,232,0.5); margin-top: 0.5rem; min-height: 1.2rem; }
+    #test-result { display: none; margin-top: 2rem; padding: 1.5rem; background: rgba(184,150,12,0.1); border: 1px solid rgba(184,150,12,0.3); }
+    #test-result h4 { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--gold-light); margin-bottom: 0.75rem; }
+    #test-result p { color: rgba(244,240,232,0.7); font-size: 0.75rem; }
+    #result-score { font-family: 'Cormorant Garamond', serif; font-size: 3rem; color: var(--gold-light); line-height: 1; margin-bottom: 0.5rem; }
+    .hearing-stops-list { margin-top: 1rem; font-size: 0.68rem; color: rgba(244,240,232,0.5); line-height: 1.8; letter-spacing: 0.05em; }
+    .stop-btn { padding: 1rem 2.5rem; background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.15); color: var(--cream); font-family: 'Josefin Sans', sans-serif; font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; margin-top: 1.5rem; display: block; width: 100%; }
+    .stop-btn:hover:not(:disabled) { background: rgba(184,150,12,0.15); border-color: var(--gold); color: var(--gold-light); }
+    .stop-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    footer { border-top: 1px solid var(--line); padding: 3rem 2rem; text-align: center; color: var(--muted); font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; margin-top: 4rem; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+    .chapter { animation: fadeUp 0.6s ease both; }
+    @media(max-width:600px){ .nav-links{display:none} #test-auditif{padding:2rem 1.5rem} .test-controls{flex-direction:column} }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html#sommaire">← Musée de l'Audition</a>
+  <ul class="nav-links">
+    <li><a href="#oreille">Structure</a></li>
+    <li><a href="#aides">Aides auditives</a></li>
+    <li><a href="#lsf">LSF</a></li>
+    <li><a href="#test">Test auditif</a></li>
+  </ul>
+</nav>
+
+<header class="page-header">
+  <div class="page-header-content">
+    <div class="chapter-label">Chapitre 09 · Exposition permanente</div>
+    <h1>Anomalies &amp;<br><em>Aides auditives</em></h1>
+    <p class="page-intro">De la surdité aux solutions qui transforment des vies : implants cochléaires, appareils auditifs, langue des signes et un test interactif pour explorer les limites de votre audition.</p>
+  </div>
+  <div class="page-num">09</div>
+</header>
+
+<div class="section-nav">
+  <a href="#oreille">I. Structure de l'oreille</a>
+  <a href="#surdite">II. Surdité & anomalies</a>
+  <a href="#aides">III. Aides auditives</a>
+  <a href="#lsf">IV. Langue des signes</a>
+  <a href="#test">V. Test auditif</a>
+</div>
+
+<main>
+
+  <!-- ══ I. OREILLE INTERACTIVE ══ -->
+  <section class="chapter" id="oreille">
+    <div class="section-label">I · Anatomie</div>
+    <h2>Structure du conduit auditif</h2>
+    <p>L'oreille humaine est divisée en trois grandes parties : l'oreille externe capte les sons, l'oreille moyenne les amplifie mécaniquement et l'oreille interne les convertit en signal nerveux. Cliquez sur les lettres pour en savoir plus sur chaque zone.</p>
+    <div class="gold-rule"></div>
+
+    <!--
+    ╔══════════════════════════════════════════════════════╗
+    ║  SCHÉMA INTERACTIF — GUIDE DE REPOSITIONNEMENT       ║
+    ║                                                      ║
+    ║  Les hotspots sont positionnés en % (left / top)     ║
+    ║  par rapport au coin haut-gauche de l'image.         ║
+    ║                                                      ║
+    ║  Pour ajuster : ouvre la page dans un navigateur,    ║
+    ║  clique droit > Inspecter, et modifie les valeurs    ║
+    ║  left/top de chaque .hotspot jusqu'au bon endroit.   ║
+    ║  Puis reporte les valeurs finales ici.               ║
+    ╚══════════════════════════════════════════════════════╝
+    -->
+    <div class="ear-diagram-wrap">
+      <img src="images/conduit_auditif.jpeg" alt="Schéma du conduit auditif"/>
+      <!-- Positions approximatives — À AJUSTER selon votre image -->
+      <button class="hotspot" style="left:13.25%; top:4.5%" data-zone="externe"   onclick="showZone('externe')">E</button>
+      <button class="hotspot" style="left:53%; top:60%" data-zone="tympan"    onclick="showZone('tympan')">T</button>
+      <button class="hotspot" style="left:35%; top:4.5%" data-zone="moyenne"   onclick="showZone('moyenne')">M</button>
+      <button class="hotspot" style="left:62%; top:58%" data-zone="osselets"  onclick="showZone('osselets')">O</button>
+      <button class="hotspot" style="left:70%; top:50%" data-zone="cochlee"   onclick="showZone('cochlee')">C</button>
+      <button class="hotspot" style="left:83%; top:35%" data-zone="nerf"      onclick="showZone('nerf')">N</button>
+    </div>
+
+    <div class="ear-info-box" id="ear-info">
+      <div class="ear-info-title" id="ear-info-title"></div>
+      <div class="ear-info-text" id="ear-info-text"></div>
+    </div>
+
+    <div class="two-col" style="margin-top:3rem">
+      <div>
+        <h3>Oreille externe</h3>
+        <p>Composée du pavillon (auricule) et du canal auditif externe, elle capte et canalise les ondes sonores vers le tympan. Sa forme caractéristique aide à localiser les sons dans l'espace, notamment dans le plan vertical.</p>
+      </div>
+      <div>
+        <h3>Oreille moyenne</h3>
+        <p>Cavité remplie d'air contenant la chaîne des osselets — marteau, enclume et étrier. Ces trois os, les plus petits du corps humain, transmettent et amplifient les vibrations du tympan vers l'oreille interne.</p>
+      </div>
+      <div>
+        <h3>Tympan</h3>
+        <p>Fine membrane élastique qui vibre sous l'effet des ondes sonores. Son déplacement, de l'ordre du nanomètre pour les sons faibles, met en mouvement la chaîne ossiculaire. Une perforation entraîne une surdité de transmission souvent réversible.</p>
+      </div>
+      <div>
+        <h3>Cochlée (limaçon)</h3>
+        <p>Organe en spirale de l'oreille interne contenant les cellules ciliées. La cochlée sépare les fréquences : les sons aigus sont traités à la base, les graves à l'apex. Elle réalise la transduction mécano-électrique.</p>
+      </div>
+      <div>
+        <h3>Cellules ciliées</h3>
+        <p>Il en existe environ 15 000 dans chaque oreille. Ce sont elles qui transforment le mouvement mécanique en influx nerveux. Non régénérables, leur destruction par le bruit, les médicaments ou le vieillissement est définitive.</p>
+      </div>
+      <div>
+        <h3>Nerf auditif (VIII)</h3>
+        <p>Achemine les informations électriques vers le cortex auditif du cerveau. Il est composé d'environ 30 000 fibres nerveuses, chacune répondant à une gamme de fréquences spécifiques.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ II. SURDITÉ ══ -->
+  <section class="chapter" id="surdite">
+    <div class="section-label">II · Anomalies</div>
+    <h2>Surdité & troubles de l'audition</h2>
+    <p>On parle de surdité dès qu'une perte auditive dépasse 20 dB. Elle peut être légère, moyenne, sévère ou profonde, et toucher une ou les deux oreilles.</p>
+    <div class="gold-rule"></div>
+
+    <div class="two-col">
+      <div>
+        <h3>Surdité de transmission</h3>
+        <p>Le son ne parvient pas correctement à l'oreille interne, en raison d'un bouchon de cérumen, d'une otite, d'une perforation du tympan ou d'une malformation des osselets. Souvent traitable médicalement ou chirurgicalement.</p>
+        <h3 style="margin-top:2rem">Surdité de perception</h3>
+        <p>Atteinte des cellules ciliées de la cochlée ou du nerf auditif. Généralement irréversible. La presbyacousie (surdité liée à l'âge) en est la forme la plus courante : elle débute par les hautes fréquences.</p>
+      </div>
+      <div>
+        <img class="img-centered" src="images/audiogramme.jpeg" alt="Audiogramme — audiométrie tonale" style="max-width:100%; margin:0;"/>
+        <p class="img-caption">Audiométrie tonale — lecture d'un audiogramme</p>
+      </div>
+    </div>
+
+    <div class="lsf-note">« Environ 466 millions de personnes dans le monde souffrent de perte auditive invalidante, soit près de 5 % de la population mondiale. » — OMS, 2023</div>
+
+    <h3 style="margin-top:2rem">Acouphènes & hyperacousie</h3>
+    <p>Les acouphènes sont des sons perçus sans source extérieure (sifflements, bourdonnements). Ils touchent 15 % de la population adulte et peuvent être fortement invalidants. L'hyperacousie est une sensibilité exacerbée aux sons ordinaires, souvent associée à un traumatisme sonore.</p>
+  </section>
+
+  <!-- ══ III. AIDES AUDITIVES ══ -->
+  <section class="chapter" id="aides">
+    <div class="section-label">III · Histoire & technologie</div>
+    <h2>Aides auditives : du cornet acoustique à l'implant</h2>
+    <p>Depuis des siècles, l'humain cherche à compenser la perte auditive. Des premières cornes animales aux dispositifs numériques d'aujourd'hui, voici une traversée des grandes inventions.</p>
+    <div class="gold-rule"></div>
+
+    <div class="device-scroll">
+
+      <!-- Cornet acoustique -->
+      <div class="device-card">
+        <div class="device-card-img">
+          <img src="images/cornet_acoustique.jpeg" alt="Cornet acoustique"/>
+        </div>
+        <div class="device-card-body">
+          <div class="device-card-era">XVII–XIX<sup>e</sup> siècle</div>
+          <div class="device-card-name">Le Cornet acoustique</div>
+          <div class="device-card-desc">Simple pavillon évasé qui concentre les ondes sonores vers le canal auditif. Aucune électronique, mais un principe — capter et focaliser — qui reste la base de toute aide auditive.</div>
+        </div>
+      </div>
+
+      <!-- Prothèse numérique -->
+      <div class="device-card">
+        <div class="device-card-img">
+          <img src="images/prothese.jpeg" alt="Prothèse auditive numérique"/>
+        </div>
+        <div class="device-card-body">
+          <div class="device-card-era">XXI<sup>e</sup> siècle · aujourd'hui</div>
+          <div class="device-card-name">Prothèse auditive numérique</div>
+          <div class="device-card-desc">Traitent le son en temps réel par algorithmes : réduction du bruit, directionnalité, Bluetooth, apprentissage adaptatif. Invisibles ou discrètes. Remboursables depuis la réforme « 100 % Santé ».</div>
+        </div>
+      </div>
+
+      <!-- Implant cochléaire -->
+      <div class="device-card">
+        <div class="device-card-img">
+          <img src="images/implant_cochleaire.jpeg" alt="Implant cochléaire porté"/>
+        </div>
+        <div class="device-card-body">
+          <div class="device-card-era">1978 — présent</div>
+          <div class="device-card-name">L'implant cochléaire</div>
+          <div class="device-card-desc">Dispositif chirurgical qui contourne les cellules ciliées endommagées. Un processeur externe capte le son ; une électrode insérée dans la cochlée stimule directement le nerf auditif.</div>
+        </div>
+      </div>
+
+      <!-- Voie osseuse / BAHA -->
+      <div class="device-card">
+        <div class="device-card-img">
+          <img src="images/voie_osseuse.jpeg" alt="Implant à ancrage osseux — conduction osseuse"/>
+        </div>
+        <div class="device-card-body">
+          <div class="device-card-era">Implant osseux · BAHA</div>
+          <div class="device-card-name">Conduction osseuse</div>
+          <div class="device-card-desc">Pour certaines surdités de transmission, le son est conduit directement à travers le crâne jusqu'à la cochlée, contournant l'oreille externe et moyenne. Une ancre en titane est implantée dans l'os temporal.</div>
+        </div>
+      </div>
+
+    </div>
+    <p style="font-size:.65rem; color:var(--muted); letter-spacing:.1em; margin-top:.75rem">← Faites défiler pour voir tous les appareils →</p>
+
+    <!-- Focus implant cochléaire -->
+    <div style="margin-top:3rem">
+      <h3>Focus : l'implant cochléaire</h3>
+      <div class="two-col">
+        <div>
+          <p>Composé d'une partie externe (processeur sonore et bobine de transmission) et d'une partie interne implantée chirurgicalement (récepteur + porte-électrodes), l'implant cochléaire est indiqué pour les surdités sévères à profondes lorsque les prothèses conventionnelles ne suffisent plus.</p>
+          <p>L'opération dure environ 2 heures. La rééducation orthophonique qui suit est essentielle, en particulier chez le jeune enfant, pour apprendre à interpréter les signaux électriques comme des sons.</p>
+          <p>En France, environ 8 000 implantations sont réalisées chaque année. On estime à 800 000 le nombre de porteurs d'implants cochléaires dans le monde.</p>
+        </div>
+        <div>
+          <img class="img-centered" src="images/schema_implant_cochleaire.png" alt="Schéma de l'implant cochléaire" style="max-width:100%; margin:0;"/>
+          <p class="img-caption">Coupe schématique de l'implant cochléaire</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ IV. LSF ══ -->
+  <section class="chapter" id="lsf">
+    <div class="section-label">IV · Communication</div>
+    <h2>La Langue des Signes Française</h2>
+    <p>La LSF est une langue à part entière, avec sa propre grammaire, sa syntaxe et son vocabulaire. Elle est utilisée par environ 100 000 personnes en France. Reconnue officiellement par la loi du 11 février 2005, elle peut être choisie comme première langue d'enseignement pour les enfants sourds.</p>
+    <div class="gold-rule"></div>
+
+    <div class="two-col">
+      <div>
+        <h3>Une langue visuo-gestuelle</h3>
+        <p>Contrairement à ce qu'on croit souvent, la LSF n'est pas une traduction mot à mot du français. La syntaxe est différente : l'espace est utilisé pour indiquer les relations entre les éléments, et le visage joue un rôle grammatical.</p>
+        <p>Il existe autant de langues des signes que de pays — ASL aux États-Unis, BSL en Grande-Bretagne, DGS en Allemagne. Elles ne sont pas mutuellement intelligibles.</p>
+        <p>La <strong>dactylologie</strong> (alphabet manuel) permet d'épeler lettre à lettre les mots qui n'ont pas de signe propre : noms propres, termes techniques, etc.</p>
+        <div class="lsf-note" style="margin-top:1.5rem">La LSF a été fondée par l'abbé de l'Épée au XVIII<sup>e</sup> siècle, qui créa la première école publique pour sourds à Paris en 1760.</div>
+      </div>
+      <div>
+        <img class="img-centered" src="images/alphabet_langue_des_signes.jpg" alt="Alphabet de la langue des signes française — dactylologie" style="max-width:100%; margin:0;"/>
+        <p class="img-caption">Dactylologie — alphabet de la LSF</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ V. TEST AUDITIF ══ -->
+  <section class="chapter" id="test">
+    <div class="section-label">V · Expérience interactive</div>
+    <h2>Test auditif — explorez vos limites</h2>
+    <p>L'oreille humaine perçoit théoriquement les fréquences de 20 Hz à 20 000 Hz. Avec l'âge, les hautes fréquences disparaissent progressivement. <strong>Utilisez un casque ou des écouteurs</strong> pour un résultat fiable.</p>
+
+    <div id="test-auditif">
+      <h3>🎧 Test de fréquence auditive</h3>
+      <p style="margin-top:.5rem; font-size:.73rem">Appuyez sur Démarrer. La fréquence va progressivement monter de 20 Hz à 20 000 Hz. Cliquez sur le bouton chaque fois que le son disparaît ou réapparaît.</p>
+
+      <div class="freq-bar-wrap">
+        <div class="freq-labels">
+          <span>20 Hz</span><span>100 Hz</span><span>500 Hz</span><span>2 kHz</span><span>8 kHz</span><span>20 kHz</span>
+        </div>
+        <div class="freq-track">
+          <div id="freq-progress"></div>
+          <div id="freq-marker"></div>
+        </div>
+      </div>
+
+      <div id="test-freq-display">— Hz</div>
+      <div id="test-status">Appuyez sur Démarrer pour commencer</div>
+
+      <button class="stop-btn" id="cant-hear-btn" disabled onclick="markStop()">
+        ✋ Je n'entends plus / le son a réapparu
+      </button>
+
+      <div class="test-controls">
+        <button class="btn btn-primary" id="start-btn" onclick="startTest()">Démarrer</button>
+        <button class="btn btn-secondary" id="stop-btn" onclick="stopTest()" disabled>Arrêter</button>
+        <button class="btn btn-secondary" id="reset-btn" onclick="resetTest()" style="display:none">Nouveau test</button>
+      </div>
+
+      <div id="test-result">
+        <h4>Résultat estimé</h4>
+        <div id="result-score"></div>
+        <p id="result-text"></p>
+        <div class="hearing-stops-list" id="stops-list"></div>
+        <p style="margin-top:1rem; opacity:.5; font-size:.65rem">⚠ Ce test est indicatif et dépend de votre matériel audio. Il ne remplace pas un audiogramme réalisé par un professionnel de santé.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>Musée de l'Audition &nbsp;·&nbsp; Chapitre 09 — Anomalies &amp; Aides auditives</p>
+  <p style="margin-top:.5rem"><a href="index.html" style="color:var(--gold);text-decoration:none">← Retour au sommaire</a></p>
+</footer>
+
+<script>
+const zoneData = {
+  externe:  { title: "Oreille externe : pavillon & canal auditif", text: "Le pavillon (auricule) est la partie visible de l'oreille. Sa forme particulière aide à localiser les sons dans l'espace. Le canal auditif externe (~2,5 cm) achemine les ondes sonores jusqu'au tympan. Il est tapissé de glandes sébacées qui produisent le cérumen, protégeant l'oreille des corps étrangers." },
+  tympan:   { title: "Tympan", text: "Fine membrane élastique (environ 8–9 mm de diamètre) qui vibre sous l'effet des ondes de pression sonore. Ses vibrations sont transmises à la chaîne des osselets. Une perforation du tympan entraîne une surdité de transmission, souvent réversible après cicatrisation." },
+  moyenne:  { title: "Oreille moyenne", text: "Cavité remplie d'air contenant les trois osselets : marteau (malleus), enclume (incus) et étrier (stapes). Ils constituent la plus petite chaîne articulée du corps humain et amplifient les vibrations du tympan (~30 fois en surface). La trompe d'Eustache équilibre la pression entre l'oreille moyenne et l'extérieur." },
+  osselets: { title: "Osselets : marteau, enclume, étrier", text: "Le marteau est solidaire du tympan. L'enclume fait le lien. L'étrier, le plus petit os du corps humain (~3 mm), transmet les vibrations à la fenêtre ovale de la cochlée. Ensemble, ils adaptent l'impédance entre l'air et les fluides de l'oreille interne, maximisant le transfert d'énergie." },
+  cochlee:  { title: "Cochlée (limaçon)", text: "Organe spiralé d'environ 35 mm de long, enroulé 2,5 fois. Elle contient l'organe de Corti, qui abrite les ~15 000 cellules ciliées responsables de la transduction mécano-électrique. Chaque cellule est sensible à une fréquence : les sons aigus sont traités à la base, les graves à l'apex (tonotopie)." },
+  nerf:     { title: "Nerf cochléaire (VIII)", text: "Le nerf vestibulo-cochléaire (8e paire crânienne) achemine les influx nerveux des cellules ciliées vers le tronc cérébral, puis le cortex auditif du lobe temporal. Il est composé d'environ 30 000 fibres nerveuses. Sa lésion entraîne une surdité neurosensorielle sévère." }
+};
+
+function showZone(zone) {
+  const data = zoneData[zone]; if (!data) return;
+  document.querySelectorAll('.hotspot').forEach(h => h.classList.remove('active'));
+  document.querySelector(`[data-zone="${zone}"]`)?.classList.add('active');
+  const box = document.getElementById('ear-info');
+  document.getElementById('ear-info-title').textContent = data.title;
+  document.getElementById('ear-info-text').textContent  = data.text;
+  box.classList.add('visible');
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+let audioCtx=null, oscillator=null, gainNode=null, testRunning=false;
+let currentFreq=20, animFrame=null, stops=[], startTime=null;
+const MIN_FREQ=20, MAX_FREQ=20000, TEST_DURATION=60000;
+
+function freqAtTime(e){ return MIN_FREQ * Math.pow(MAX_FREQ/MIN_FREQ, Math.min(e/TEST_DURATION,1)); }
+function percentAtFreq(f){ return (Math.log(f/MIN_FREQ)/Math.log(MAX_FREQ/MIN_FREQ))*100; }
+function formatFreq(f){ return f>=1000 ? (f/1000).toFixed(f>=10000?0:1)+' kHz' : Math.round(f)+' Hz'; }
+
+function startTest(){
+  if(testRunning) return;
+  audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  gainNode = audioCtx.createGain(); gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+  oscillator = audioCtx.createOscillator(); oscillator.type='sine';
+  oscillator.frequency.setValueAtTime(MIN_FREQ, audioCtx.currentTime);
+  oscillator.connect(gainNode); gainNode.connect(audioCtx.destination); oscillator.start();
+  testRunning=true; stops=[]; startTime=performance.now(); currentFreq=MIN_FREQ;
+  document.getElementById('start-btn').disabled=true;
+  document.getElementById('stop-btn').disabled=false;
+  document.getElementById('cant-hear-btn').disabled=false;
+  document.getElementById('test-result').style.display='none';
+  document.getElementById('reset-btn').style.display='none';
+  document.getElementById('test-status').textContent='En cours… écoutez attentivement.';
+  animLoop();
+}
+
+function animLoop(){
+  if(!testRunning) return;
+  const elapsed = performance.now()-startTime;
+  if(elapsed>=TEST_DURATION){ endTest(); return; }
+  currentFreq = freqAtTime(elapsed);
+  oscillator.frequency.setValueAtTime(currentFreq, audioCtx.currentTime);
+  const pct = percentAtFreq(currentFreq);
+  document.getElementById('freq-progress').style.width = pct+'%';
+  document.getElementById('freq-marker').style.left   = pct+'%';
+  document.getElementById('test-freq-display').textContent = formatFreq(currentFreq);
+  animFrame = requestAnimationFrame(animLoop);
+}
+
+function markStop(){
+  if(!testRunning) return;
+  stops.push({freq:currentFreq, time:performance.now()-startTime});
+  const btn = document.getElementById('cant-hear-btn');
+  btn.textContent = `✅ Marqué à ${formatFreq(currentFreq)} — cliquez à nouveau si le son réapparaît`;
+  setTimeout(()=>{ if(testRunning) btn.textContent='✋ Je n\'entends plus / le son a réapparu'; }, 2000);
+}
+
+function stopTest(){ testRunning=false; cancelAnimationFrame(animFrame); try{oscillator.stop();}catch(e){} try{audioCtx.close();}catch(e){} endTest(); }
+
+function endTest(){
+  testRunning=false; cancelAnimationFrame(animFrame);
+  try{oscillator.stop();}catch(e){} try{audioCtx.close();}catch(e){}
+  document.getElementById('start-btn').disabled=true;
+  document.getElementById('stop-btn').disabled=true;
+  document.getElementById('cant-hear-btn').disabled=true;
+  document.getElementById('reset-btn').style.display='inline-block';
+  document.getElementById('test-status').textContent='Test terminé.';
+  showResult();
+}
+
+function showResult(){
+  const result = document.getElementById('test-result'); result.style.display='block';
+  let maxHeard = stops.length>0 ? stops[0].freq : currentFreq;
+  document.getElementById('result-score').textContent = formatFreq(maxHeard);
+  let interp = maxHeard>=16000 ? "Excellente audition ! Vous percevez les très hautes fréquences — généralement observé chez les jeunes adultes et les enfants."
+             : maxHeard>=12000 ? "Bonne audition. Une légère perte dans les aigus est normale avec l'âge ou l'exposition au bruit."
+             : maxHeard>=8000  ? "Audition dans la moyenne d'un adulte de 40–55 ans. Les conversations restent accessibles, mais les sons très aigus commencent à disparaître."
+             : maxHeard>=4000  ? "Perte notable dans les hautes fréquences. Une consultation chez un audioprothésiste ou un ORL pourrait être utile."
+             :                   "Perte auditive significative dans les fréquences élevées. Un audiogramme professionnel est recommandé.";
+  document.getElementById('result-text').textContent = interp;
+  document.getElementById('stops-list').textContent = stops.length>0
+    ? 'Marquages : '+stops.map((s,i)=>`${i+1}. ${formatFreq(s.freq)}`).join(' — ')
+    : 'Aucun marquage effectué.';
+  result.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function resetTest(){
+  document.getElementById('start-btn').disabled=false;
+  document.getElementById('stop-btn').disabled=true;
+  document.getElementById('cant-hear-btn').disabled=true;
+  document.getElementById('cant-hear-btn').textContent='✋ Je n\'entends plus / le son a réapparu';
+  document.getElementById('reset-btn').style.display='none';
+  document.getElementById('test-result').style.display='none';
+  document.getElementById('test-freq-display').textContent='— Hz';
+  document.getElementById('test-status').textContent='Appuyez sur Démarrer pour recommencer';
+  document.getElementById('freq-progress').style.width='0%';
+  document.getElementById('freq-marker').style.left='0%';
+  stops=[];
+}
+</script>
+</body>
+</html>

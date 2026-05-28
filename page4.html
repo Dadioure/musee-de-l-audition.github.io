@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>04 · Son émis par une corde — Musée de l'Audition</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@200;300;400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #f4f0e8; --warm-white: #faf8f4; --ink: #1a1410;
+      --brown: #5c3d2e; --gold: #b8960c; --gold-light: #d4b44a;
+      --muted: #8a7968; --line: #d8d0c0;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Josefin Sans', sans-serif; background: var(--warm-white); color: var(--ink); overflow-x: hidden; }
+
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(26,20,16,0.97); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(184,150,12,0.2); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 3.5rem; }
+    .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-style: italic; color: var(--gold-light); letter-spacing: 0.05em; text-decoration: none; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--gold-light); }
+
+    .page-header { background: var(--ink); padding: 5rem 2rem 4rem; position: relative; overflow: hidden; }
+    .page-header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 80% at 20% 50%, rgba(92,61,46,0.35) 0%, transparent 60%); }
+    .page-num { font-family: 'Cormorant Garamond', serif; font-size: 8rem; font-weight: 300; color: rgba(184,150,12,0.12); line-height: 1; position: absolute; right: 2rem; bottom: -1rem; }
+    .page-header-content { max-width: 700px; position: relative; }
+    .chapter-label { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.5rem; }
+    .page-header h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 300; color: var(--cream); line-height: 1.1; }
+    .page-header h1 em { font-style: italic; color: var(--gold-light); }
+    .page-intro { margin-top: 1.5rem; font-size: 0.8rem; letter-spacing: 0.06em; color: var(--muted); line-height: 1.8; max-width: 560px; }
+
+    .section-nav { background: var(--cream); border-bottom: 1px solid var(--line); padding: 0 2rem; display: flex; overflow-x: auto; }
+    .section-nav a { padding: 1rem 1.5rem; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); text-decoration: none; white-space: nowrap; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s; }
+    .section-nav a:hover { color: var(--ink); border-color: var(--gold); }
+
+    main { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+    section.chapter { padding: 5rem 0; border-bottom: 1px solid var(--line); }
+    section.chapter:last-child { border-bottom: none; }
+    .section-label { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 2.5rem; display: flex; align-items: center; gap: 1rem; }
+    .section-label::after { content:''; flex:1; height:1px; background:var(--line); }
+    h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 300; line-height: 1.2; margin-bottom: 1.5rem; }
+    h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 400; margin-bottom: 1rem; color: var(--brown); }
+    p { font-size: 0.82rem; line-height: 1.85; color: #3d3028; max-width: 680px; letter-spacing: 0.03em; margin-bottom: 1rem; }
+    .gold-rule { width:3rem; height:1px; background:var(--gold); margin: 2rem 0; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; margin: 2rem 0; }
+    @media(max-width:700px){ .two-col { grid-template-columns: 1fr; } }
+    .note-box { background: var(--cream); border-left: 3px solid var(--gold); padding: 1.2rem 1.8rem; margin: 2rem 0; font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-style: italic; color: var(--brown); line-height: 1.6; max-width: 700px; }
+    .img-caption { text-align: center; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-top: 0.5rem; margin-bottom: 1.5rem; }
+    .img-placeholder { width:100%; aspect-ratio:16/7; background:var(--cream); border:1.5px dashed var(--line); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.75rem; color:var(--muted); font-size:.68rem; letter-spacing:.12em; text-transform:uppercase; margin:2rem 0; }
+    .img-placeholder span { font-size:2rem; opacity:.2; }
+
+    /* ── CORDE INTERACTIVE ── */
+    .string-wrap {
+      background: #0a0e1a;
+      border: 1.5px solid var(--line);
+      border-radius: 2px;
+      padding: 1.5rem;
+      margin: 2rem 0;
+      cursor: pointer;
+      user-select: none;
+    }
+    .string-wrap canvas { width: 100%; display: block; }
+    .string-hint { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.2); text-align: center; margin-top: 0.6rem; }
+
+    /* ── HARMONIQUES SÉLECTEUR ── */
+    .harmonic-controls {
+      display: flex; gap: 1rem; flex-wrap: wrap; margin: 1.5rem 0;
+      align-items: center;
+    }
+    .harm-btn {
+      padding: 0.6rem 1.4rem;
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+      border: 1.5px solid var(--line); background: var(--warm-white);
+      color: var(--muted); cursor: pointer; transition: all 0.2s;
+    }
+    .harm-btn:hover { border-color: var(--gold); color: var(--ink); }
+    .harm-btn.active { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+
+    /* ── SIMULATEUR CORDE ── */
+    .string-sim {
+      background: var(--ink);
+      border-radius: 2px;
+      padding: 2.5rem;
+      margin: 2rem 0;
+    }
+    .string-sim h3 { color: var(--gold-light); margin-bottom: 0.5rem; }
+    .string-sim p  { color: rgba(244,240,232,0.6); font-size: 0.78rem; }
+
+    .sim-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.5rem 0; }
+    @media(max-width:600px){ .sim-controls { grid-template-columns: 1fr; } }
+    .ctrl-group { display: flex; flex-direction: column; gap: 0.5rem; }
+    .ctrl-label { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between; }
+    .ctrl-label span { color: var(--gold-light); }
+    input[type=range] { -webkit-appearance: none; width: 100%; height: 3px; background: rgba(255,255,255,0.15); border-radius: 2px; outline: none; }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--gold); cursor: pointer; }
+
+    .sim-result {
+      margin-top: 1.5rem;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
+    }
+    .sim-val { text-align: center; }
+    .sim-val-num { font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: var(--gold-light); line-height: 1; }
+    .sim-val-unit { font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-top: 0.3rem; }
+
+    .play-btn {
+      margin-top: 1.5rem;
+      padding: 0.75rem 2rem;
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+      background: var(--gold); color: var(--ink); border: none; cursor: pointer;
+      transition: background 0.2s;
+    }
+    .play-btn:hover { background: var(--gold-light); }
+    .stop-btn-sm {
+      margin-top: 1.5rem; margin-left: 1rem;
+      padding: 0.75rem 2rem;
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+      background: transparent; color: var(--cream);
+      border: 1px solid rgba(255,255,255,0.2); cursor: pointer;
+    }
+
+    /* ── TABLE HARMONIQUES ── */
+    .harm-table { width: 100%; border-collapse: collapse; margin: 2rem 0; font-size: 0.75rem; }
+    .harm-table th { background: var(--ink); color: var(--gold-light); font-weight: 300; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.75rem 1rem; text-align: left; font-size: 0.65rem; }
+    .harm-table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--line); color: #3d3028; }
+    .harm-table tr:hover td { background: var(--cream); }
+
+    footer { border-top: 1px solid var(--line); padding: 3rem 2rem; text-align: center; color: var(--muted); font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; margin-top: 4rem; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+    .chapter { animation: fadeUp 0.6s ease both; }
+    @media(max-width:600px){ .nav-links{display:none} }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html#sommaire">← Musée de l'Audition</a>
+  <ul class="nav-links">
+    <li><a href="#vibration">Vibration</a></li>
+    <li><a href="#harmoniques">Harmoniques</a></li>
+    <li><a href="#simulateur">Simulateur</a></li>
+    <li><a href="#instruments">Instruments</a></li>
+  </ul>
+</nav>
+
+<header class="page-header">
+  <div class="page-header-content">
+    <div class="chapter-label">Chapitre 04 · Exposition permanente</div>
+    <h1>Son émis<br><em>par une corde</em></h1>
+    <p class="page-intro">Comment une simple corde tendue, mise en vibration, produit-elle un son musical riche et complexe ? Des modes de vibration aux harmoniques, explorez la physique des cordes vibrantes.</p>
+  </div>
+  <div class="page-num">04</div>
+</header>
+
+<div class="section-nav">
+  <a href="#vibration">I. La corde vibrante</a>
+  <a href="#harmoniques">II. Harmoniques</a>
+  <a href="#simulateur">III. Simulateur</a>
+  <a href="#instruments">IV. Instruments à cordes</a>
+</div>
+
+<main>
+
+  <!-- ══ I. VIBRATION ══ -->
+  <section class="chapter" id="vibration">
+    <div class="section-label">I · La corde vibrante</div>
+    <h2>Pincer une corde pour créer un son</h2>
+    <p>Lorsqu'une corde tendue est pincée, frappée ou frottée, elle se met à vibrer autour de sa position d'équilibre. Cette vibration crée des compressions et raréfactions de l'air environnant — une onde sonore. <strong>Cliquez sur la corde</strong> ci-dessous pour la mettre en vibration.</p>
+    <div class="gold-rule"></div>
+
+    <div class="string-wrap" id="string-wrap" onclick="pluckString()">
+      <canvas id="string-canvas" height="120"></canvas>
+      <div class="string-hint">Cliquez pour pincer la corde</div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h3>Conditions aux limites</h3>
+        <p>Aux deux extrémités de la corde (les <em>nœuds</em>), le déplacement est nul — la corde est fixée. Entre ces deux points, elle peut vibrer librement. Cette contrainte impose que seules certaines fréquences sont possibles : celles pour lesquelles un nombre entier de demi-longueurs d'onde s'inscrit exactement entre les deux extrémités.</p>
+      </div>
+      <div>
+        <h3>Longueur d'onde & fréquence</h3>
+        <p>La fréquence fondamentale correspond au mode où la corde vibre en une seule « ventre » (demi-longueur d'onde = longueur de la corde). Plus la corde est courte, tendue ou légère, plus la fréquence fondamentale est élevée — c'est pourquoi un violoniste raccourcit la corde avec ses doigts pour jouer des notes aiguës.</p>
+      </div>
+    </div>
+
+    <div class="note-box">La formule de Mersenne (1636) relie la fréquence fondamentale d'une corde à sa longueur L, sa tension T et sa masse linéique μ : f = (1/2L) × √(T/μ). Raccourcir la longueur de moitié double la fréquence — soit une octave plus haut.</div>
+  </section>
+
+  <!-- ══ II. HARMONIQUES ══ -->
+  <section class="chapter" id="harmoniques">
+    <div class="section-label">II · Modes de vibration & harmoniques</div>
+    <h2>La corde ne vibre pas qu'en une seule fréquence</h2>
+    <p>En réalité, une corde vibrante produit simultanément sa fréquence fondamentale et ses <strong>harmoniques</strong> — des fréquences multiples entières de la fondamentale. Choisissez un mode pour visualiser la forme de la corde.</p>
+    <div class="gold-rule"></div>
+
+    <div class="harmonic-controls">
+      <button class="harm-btn active" data-mode="1" onclick="setMode(1,this)">Mode 1 — Fondamentale</button>
+      <button class="harm-btn" data-mode="2" onclick="setMode(2,this)">Mode 2 — 1ʳᵉ harmonique</button>
+      <button class="harm-btn" data-mode="3" onclick="setMode(3,this)">Mode 3 — 2ᵉ harmonique</button>
+      <button class="harm-btn" data-mode="4" onclick="setMode(4,this)">Mode 4 — 3ᵉ harmonique</button>
+      <button class="harm-btn" data-mode="5" onclick="setMode(5,this)">Mode 5 — 4ᵉ harmonique</button>
+    </div>
+
+    <div class="string-wrap" style="cursor:default">
+      <canvas id="harmonic-canvas" height="140"></canvas>
+      <div class="string-hint" id="harmonic-label">Mode 1 · 1 ventre · fréquence = f₀</div>
+    </div>
+
+    <table class="harm-table">
+      <thead><tr><th>Mode</th><th>Nom</th><th>Nœuds</th><th>Ventres</th><th>Fréquence</th><th>Intervalle musical</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Fondamentale (f₀)</td><td>2</td><td>1</td><td>f₀</td><td>— (référence)</td></tr>
+        <tr><td>2</td><td>1ʳᵉ harmonique</td><td>3</td><td>2</td><td>2 × f₀</td><td>Octave</td></tr>
+        <tr><td>3</td><td>2ᵉ harmonique</td><td>4</td><td>3</td><td>3 × f₀</td><td>Quinte + octave</td></tr>
+        <tr><td>4</td><td>3ᵉ harmonique</td><td>5</td><td>4</td><td>4 × f₀</td><td>2 octaves</td></tr>
+        <tr><td>5</td><td>4ᵉ harmonique</td><td>6</td><td>5</td><td>5 × f₀</td><td>2 octaves + tierce</td></tr>
+      </tbody>
+    </table>
+
+    <div class="two-col">
+      <div>
+        <h3>Nœuds & ventres</h3>
+        <p>Un <strong>nœud</strong> est un point où la corde ne se déplace pas (déplacement nul). Un <strong>ventre</strong> est un point d'amplitude maximale. Pour le mode n, la corde présente n ventres et n+1 nœuds (en comptant les extrémités). Ces positions fixes dans l'espace définissent ce qu'on appelle une <em>onde stationnaire</em>.</p>
+      </div>
+      <div>
+        <h3>Le spectre harmonique</h3>
+        <p>En pratique, une corde pincée vibre simultanément dans tous ses modes. Le son perçu est la superposition de la fondamentale et de ses harmoniques. C'est le mélange particulier de ces harmoniques — leur nombre et leur intensité relative — qui donne au son son <strong>timbre</strong> caractéristique.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ III. SIMULATEUR ══ -->
+  <section class="chapter" id="simulateur">
+    <div class="section-label">III · Simulateur interactif</div>
+    <h2>Modifiez la corde, écoutez le résultat</h2>
+    <p>Jouez sur la longueur, la tension et la densité de la corde pour voir et entendre comment ces paramètres influencent la fréquence fondamentale émise.</p>
+    <div class="gold-rule"></div>
+
+    <div class="string-sim">
+      <h3>🎸 Simulateur de corde vibrante</h3>
+      <p style="margin-top:.4rem">Modifiez les paramètres ci-dessous. La fréquence se calcule en temps réel selon la formule de Mersenne.</p>
+
+      <div class="sim-controls">
+        <div class="ctrl-group">
+          <div class="ctrl-label">Longueur de la corde <span id="lbl-len">65 cm</span></div>
+          <input type="range" id="sl-len" min="20" max="200" value="65" step="1" oninput="updateSim()"/>
+        </div>
+        <div class="ctrl-group">
+          <div class="ctrl-label">Tension <span id="lbl-ten">100 N</span></div>
+          <input type="range" id="sl-ten" min="10" max="500" value="100" step="5" oninput="updateSim()"/>
+        </div>
+        <div class="ctrl-group">
+          <div class="ctrl-label">Masse linéique <span id="lbl-mu">1.0 g/m</span></div>
+          <input type="range" id="sl-mu" min="0.5" max="10" value="1.0" step="0.1" oninput="updateSim()"/>
+        </div>
+        <div class="ctrl-group">
+          <div class="ctrl-label">Mode harmonique <span id="lbl-mode">1 (fondamentale)</span></div>
+          <input type="range" id="sl-mode" min="1" max="5" value="1" step="1" oninput="updateSim()"/>
+        </div>
+      </div>
+
+      <div class="sim-result">
+        <div class="sim-val">
+          <div class="sim-val-num" id="res-freq">220</div>
+          <div class="sim-val-unit">Hz — fréquence</div>
+        </div>
+        <div class="sim-val">
+          <div class="sim-val-num" id="res-lambda">—</div>
+          <div class="sim-val-unit">cm — longueur d'onde</div>
+        </div>
+        <div class="sim-val">
+          <div class="sim-val-num" id="res-note">—</div>
+          <div class="sim-val-unit">Note approx.</div>
+        </div>
+      </div>
+
+      <div>
+        <button class="play-btn" id="sim-play" onclick="toggleSimSound()">▶ Écouter</button>
+        <button class="stop-btn-sm" onclick="stopSimSound()">■ Stop</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ IV. INSTRUMENTS ══ -->
+  <section class="chapter" id="instruments">
+    <div class="section-label">IV · Instruments à cordes</div>
+    <h2>De la physique à la musique</h2>
+    <p>Tous les instruments à cordes exploitent les mêmes principes physiques. Ce qui les différencie : la longueur des cordes, leur tension, leur matière, et la façon dont elles sont excitées (pincées, frappées, frottées) et dont le son est amplifié (caisse de résonance).</p>
+    <div class="gold-rule"></div>
+
+
+    <div class="two-col">
+      <div>
+        <img src="images/guitare.jpg" alt="Guitare acoustique" style="width:100%; border:1.5px solid var(--line); margin-bottom:1rem;"/>
+        <h3>Guitare — corde pincée</h3>
+        <p>Les 6 cordes de la guitare classique varient en diamètre (masse linéique) et en tension. Le guitariste raccourcit la corde en la pressant sur les frettes, modifiant ainsi la longueur vibrante et donc la fréquence. La caisse de résonance en bois amplifie le son par vibration sympathique.</p>
+      </div>
+      <div>
+        <img src="images/violon.png" alt="Violon" style="width:100%; border:1.5px solid var(--line); margin-bottom:1rem;"/>
+        <h3>Violon — corde frottée</h3>
+        <p>L'archet frotté sur la corde crée une excitation continue grâce au mécanisme stick-slip : la résine de l'archet accroche la corde, la déforme, puis la lâche plusieurs centaines de fois par seconde. Ce mécanisme maintient une vibration entretenue, produisant un son continu et riche en harmoniques.</p>
+      </div>
+    </div>
+
+    <img src="images/piano_cordes.jpg" alt="Cordes intérieures d'un piano" style="width:50%; border:1.5px solid var(--line); display:block; margin:1rem auto;"/>
+    <div style="text-align:center; max-width:600px; margin:0 auto;">
+      <h3>Piano — corde frappée</h3>
+      <p>Dans un piano, chaque touche actionne un marteau recouvert de feutre qui vient frapper une ou plusieurs cordes tendues. L'impulsion est brève, et la corde vibre librement jusqu'à ce que l'étouffoir (soulevé pendant l'appui sur la touche) revienne la bloquer. La table d'harmonie en épicéa amplifie considérablement le son.</p>
+    </div>
+
+    <div class="note-box">Un piano de concert contient environ 230 cordes pour 88 touches. Dans le grave, chaque touche commande une seule corde épaisse ; dans l'aigu, jusqu'à trois cordes fines accordées à l'unisson pour enrichir le timbre.</div>
+  </section>
+
+</main>
+
+<footer>
+  <p>Musée de l'Audition &nbsp;·&nbsp; Chapitre 04 — Son émis par une corde</p>
+  <p style="margin-top:.5rem"><a href="index.html" style="color:var(--gold);text-decoration:none">← Retour au sommaire</a></p>
+</footer>
+
+<script>
+// ══ CORDE ANIMÉE (pincée) ══
+const stringCanvas = document.getElementById('string-canvas');
+const sCtx = stringCanvas.getContext('2d');
+let stringAmp = 0, stringRaf = null, stringDecay = 0;
+
+function resizeCanvas(canvas) {
+  canvas.width = canvas.offsetWidth * window.devicePixelRatio || canvas.offsetWidth;
+}
+
+function pluckString() {
+  stringAmp = 1; stringDecay = 0;
+  playPluck();
+  animString();
+}
+
+function animString() {
+  cancelAnimationFrame(stringRaf);
+  const W = stringCanvas.offsetWidth;
+  const H = stringCanvas.height;
+  stringCanvas.width = W;
+  sCtx.clearRect(0, 0, W, H);
+
+  // Fond grille
+  sCtx.strokeStyle = 'rgba(255,255,255,0.04)';
+  sCtx.lineWidth = 1;
+  sCtx.beginPath(); sCtx.moveTo(0, H/2); sCtx.lineTo(W, H/2); sCtx.stroke();
+
+  // Points d'ancrage
+  sCtx.fillStyle = 'rgba(184,150,12,0.8)';
+  sCtx.beginPath(); sCtx.arc(12, H/2, 5, 0, Math.PI*2); sCtx.fill();
+  sCtx.beginPath(); sCtx.arc(W-12, H/2, 5, 0, Math.PI*2); sCtx.fill();
+
+  if (stringAmp > 0.002) {
+    const gradient = sCtx.createLinearGradient(0,0,W,0);
+    gradient.addColorStop(0, 'rgba(184,150,12,0.3)');
+    gradient.addColorStop(0.5, `rgba(212,180,74,${stringAmp})`);
+    gradient.addColorStop(1, 'rgba(184,150,12,0.3)');
+    sCtx.strokeStyle = gradient;
+    sCtx.lineWidth = 2.5;
+    sCtx.beginPath();
+    for (let px = 0; px <= W; px++) {
+      const x = px / W;
+      const wave = Math.sin(Math.PI * x) * stringAmp * 38
+                 + Math.sin(2 * Math.PI * x) * stringAmp * 12
+                 + Math.sin(3 * Math.PI * x) * stringAmp * 6;
+      const py = H/2 - wave * Math.sin((stringDecay * 18) % (Math.PI));
+      if (px === 0) sCtx.moveTo(px, py); else sCtx.lineTo(px, py);
+    }
+    sCtx.stroke();
+    stringAmp *= 0.96;
+    stringDecay++;
+    stringRaf = requestAnimationFrame(animString);
+  } else {
+    // Corde au repos
+    sCtx.strokeStyle = 'rgba(212,180,74,0.4)';
+    sCtx.lineWidth = 2;
+    sCtx.beginPath(); sCtx.moveTo(12, H/2); sCtx.lineTo(W-12, H/2); sCtx.stroke();
+  }
+}
+// Dessin initial
+animString();
+window.addEventListener('resize', () => animString());
+
+// Son de pince
+let pluckCtx = null;
+function playPluck() {
+  if (pluckCtx) { try { pluckCtx.close(); } catch(e){} }
+  pluckCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const g = pluckCtx.createGain();
+  g.gain.setValueAtTime(0.3, pluckCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, pluckCtx.currentTime + 1.5);
+  const o = pluckCtx.createOscillator();
+  o.type = 'sawtooth'; o.frequency.setValueAtTime(220, pluckCtx.currentTime);
+  const o2 = pluckCtx.createOscillator();
+  o2.type = 'sine'; o2.frequency.setValueAtTime(440, pluckCtx.currentTime);
+  const g2 = pluckCtx.createGain(); g2.gain.setValueAtTime(0.15, pluckCtx.currentTime);
+  o.connect(g); o2.connect(g2); g2.connect(pluckCtx.destination); g.connect(pluckCtx.destination);
+  o.start(); o2.start();
+  o.stop(pluckCtx.currentTime + 1.5); o2.stop(pluckCtx.currentTime + 1.5);
+}
+
+// ══ HARMONIQUES ══
+const hCanvas = document.getElementById('harmonic-canvas');
+const hCtx = hCanvas.getContext('2d');
+let hMode = 1, hPhase = 0, hRaf = null;
+const modeLabels = ['','Mode 1 · 1 ventre · fréquence = f₀','Mode 2 · 2 ventres · fréquence = 2×f₀','Mode 3 · 3 ventres · fréquence = 3×f₀','Mode 4 · 4 ventres · fréquence = 4×f₀','Mode 5 · 5 ventres · fréquence = 5×f₀'];
+
+function setMode(n, btn) {
+  hMode = n;
+  document.querySelectorAll('.harm-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('harmonic-label').textContent = modeLabels[n];
+}
+
+function animHarmonic() {
+  const W = hCanvas.offsetWidth; hCanvas.width = W;
+  const H = hCanvas.height;
+  hCtx.clearRect(0,0,W,H);
+  hCtx.strokeStyle='rgba(255,255,255,0.04)'; hCtx.lineWidth=1;
+  hCtx.beginPath(); hCtx.moveTo(0,H/2); hCtx.lineTo(W,H/2); hCtx.stroke();
+
+  // Points d'ancrage
+  hCtx.fillStyle='rgba(184,150,12,0.8)';
+  hCtx.beginPath(); hCtx.arc(12,H/2,5,0,Math.PI*2); hCtx.fill();
+  hCtx.beginPath(); hCtx.arc(W-12,H/2,5,0,Math.PI*2); hCtx.fill();
+
+  // Nœuds intermédiaires
+  const colors = ['','#d4b44a','#b8960c','#8a6010','#6b4a0a','#4a3005'];
+  hCtx.strokeStyle = colors[hMode] || '#d4b44a';
+  hCtx.lineWidth = 2.5;
+  hCtx.beginPath();
+  for (let px=0; px<=W; px++) {
+    const x = px/W;
+    const y = Math.sin(hMode * Math.PI * x) * Math.cos(hPhase) * 45;
+    const py = H/2 - y;
+    if (px===0) hCtx.moveTo(px,py); else hCtx.lineTo(px,py);
+  }
+  hCtx.stroke();
+
+  // Marquer les nœuds
+  hCtx.fillStyle = 'rgba(255,255,255,0.4)';
+  for (let n=0; n<=hMode; n++) {
+    const nx = 12 + (W-24)*(n/hMode);
+    hCtx.beginPath(); hCtx.arc(nx, H/2, 3, 0, Math.PI*2); hCtx.fill();
+  }
+
+  hPhase += 0.05;
+  requestAnimationFrame(animHarmonic);
+}
+animHarmonic();
+
+// ══ SIMULATEUR ══
+const SPEED_SOUND = 343;
+const NOTE_NAMES = ['Do','Do#','Ré','Ré#','Mi','Fa','Fa#','Sol','Sol#','La','La#','Si'];
+
+function freqToNote(f) {
+  if (f <= 0) return '—';
+  const n = Math.round(12 * Math.log2(f / 440)) + 69;
+  const oct = Math.floor(n/12) - 1;
+  return NOTE_NAMES[((n % 12) + 12) % 12] + oct;
+}
+
+function updateSim() {
+  const L   = +document.getElementById('sl-len').value / 100;
+  const T   = +document.getElementById('sl-ten').value;
+  const mu  = +document.getElementById('sl-mu').value / 1000;
+  const mode= +document.getElementById('sl-mode').value;
+
+  document.getElementById('lbl-len').textContent  = (L*100).toFixed(0) + ' cm';
+  document.getElementById('lbl-ten').textContent  = T + ' N';
+  document.getElementById('lbl-mu').textContent   = (mu*1000).toFixed(1) + ' g/m';
+  document.getElementById('lbl-mode').textContent = mode + (mode===1?' (fondamentale)':' (harmonique '+(mode-1)+')');
+
+  const f0   = (1/(2*L)) * Math.sqrt(T/mu);
+  const f    = f0 * mode;
+  const lam  = (SPEED_SOUND / f * 100).toFixed(1);
+
+  document.getElementById('res-freq').textContent   = f.toFixed(1);
+  document.getElementById('res-lambda').textContent = lam;
+  document.getElementById('res-note').textContent   = freqToNote(f);
+
+  if (simPlaying) { startSimSound(f); }
+}
+
+let simPlaying = false, simCtx = null, simOsc = null, simGain = null;
+
+function toggleSimSound() {
+  if (simPlaying) { stopSimSound(); return; }
+  const L   = +document.getElementById('sl-len').value / 100;
+  const T   = +document.getElementById('sl-ten').value;
+  const mu  = +document.getElementById('sl-mu').value / 1000;
+  const mode= +document.getElementById('sl-mode').value;
+  const f   = (1/(2*L)) * Math.sqrt(T/mu) * mode;
+  startSimSound(f);
+}
+
+function startSimSound(f) {
+  stopSimSound();
+  simCtx  = new (window.AudioContext || window.webkitAudioContext)();
+  simGain = simCtx.createGain(); simGain.gain.setValueAtTime(0.18, simCtx.currentTime);
+  simOsc  = simCtx.createOscillator(); simOsc.type = 'sawtooth';
+  simOsc.frequency.setValueAtTime(Math.min(Math.max(f,20),8000), simCtx.currentTime);
+  simOsc.connect(simGain); simGain.connect(simCtx.destination); simOsc.start();
+  simPlaying = true;
+  document.getElementById('sim-play').textContent = '⏸ Pause';
+}
+
+function stopSimSound() {
+  if (simOsc)  { try { simOsc.stop(); }  catch(e){} }
+  if (simCtx)  { try { simCtx.close(); } catch(e){} }
+  simOsc = null; simGain = null; simCtx = null; simPlaying = false;
+  document.getElementById('sim-play').textContent = '▶ Écouter';
+}
+
+updateSim();
+</script>
+</body>
+</html>

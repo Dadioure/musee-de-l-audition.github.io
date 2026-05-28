@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>07 · Conversion en message nerveux — Musée de l'Audition</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@200;300;400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #f4f0e8; --warm-white: #faf8f4; --ink: #1a1410;
+      --brown: #5c3d2e; --gold: #b8960c; --gold-light: #d4b44a;
+      --muted: #8a7968; --line: #d8d0c0;
+      --neuro: #2980b9; --neuro-light: #5dade2;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Josefin Sans', sans-serif; background: var(--warm-white); color: var(--ink); overflow-x: hidden; }
+
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(26,20,16,0.97); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(184,150,12,0.2); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 3.5rem; }
+    .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-style: italic; color: var(--gold-light); letter-spacing: 0.05em; text-decoration: none; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--gold-light); }
+
+    .page-header { background: #0a1520; padding: 5rem 2rem 4rem; position: relative; overflow: hidden; }
+    .page-header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 80% at 80% 50%, rgba(41,128,185,0.2) 0%, transparent 60%); }
+    .page-num { font-family: 'Cormorant Garamond', serif; font-size: 8rem; font-weight: 300; color: rgba(41,128,185,0.1); line-height: 1; position: absolute; right: 2rem; bottom: -1rem; }
+    .page-header-content { max-width: 700px; position: relative; }
+    .chapter-label { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--neuro-light); margin-bottom: 1.5rem; }
+    .page-header h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 300; color: var(--cream); line-height: 1.1; }
+    .page-header h1 em { font-style: italic; color: var(--neuro-light); }
+    .page-intro { margin-top: 1.5rem; font-size: 0.8rem; letter-spacing: 0.06em; color: var(--muted); line-height: 1.8; max-width: 560px; }
+
+    .section-nav { background: var(--cream); border-bottom: 1px solid var(--line); padding: 0 2rem; display: flex; overflow-x: auto; }
+    .section-nav a { padding: 1rem 1.5rem; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); text-decoration: none; white-space: nowrap; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s; }
+    .section-nav a:hover { color: var(--ink); border-color: var(--neuro); }
+
+    main { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+    section.chapter { padding: 5rem 0; border-bottom: 1px solid var(--line); }
+    section.chapter:last-child { border-bottom: none; }
+    .section-label { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--neuro); margin-bottom: 2.5rem; display: flex; align-items: center; gap: 1rem; }
+    .section-label::after { content:''; flex:1; height:1px; background:var(--line); }
+    h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 300; line-height: 1.2; margin-bottom: 1.5rem; }
+    h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 400; margin-bottom: 1rem; color: var(--brown); }
+    p { font-size: 0.82rem; line-height: 1.85; color: #3d3028; max-width: 680px; letter-spacing: 0.03em; margin-bottom: 1rem; }
+    .gold-rule { width:3rem; height:1px; background:var(--neuro); margin: 2rem 0; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; margin: 2rem 0; }
+    @media(max-width:700px){ .two-col { grid-template-columns: 1fr; } }
+    .note-box { background: var(--cream); border-left: 3px solid var(--neuro); padding: 1.2rem 1.8rem; margin: 2rem 0; font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-style: italic; color: var(--brown); line-height: 1.6; max-width: 700px; }
+
+    /* ── PARCOURS ANIMÉ ── */
+    .pathway {
+      position: relative;
+      margin: 2rem 0;
+      padding: 2rem 0;
+    }
+    .pathway-line {
+      position: absolute;
+      left: 28px; top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--neuro), rgba(41,128,185,0.1));
+    }
+    .pathway-step {
+      display: flex; gap: 1.5rem; align-items: flex-start;
+      margin-bottom: 2.5rem; position: relative;
+      cursor: pointer;
+    }
+    .pathway-dot {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--ink); border: 2px solid var(--neuro);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; flex-shrink: 0; z-index: 1;
+      transition: background 0.25s, border-color 0.25s, transform 0.2s;
+      box-shadow: 0 0 0 4px rgba(41,128,185,0.1);
+    }
+    .pathway-step:hover .pathway-dot,
+    .pathway-step.active .pathway-dot {
+      background: var(--neuro);
+      border-color: var(--neuro-light);
+      transform: scale(1.08);
+      box-shadow: 0 0 0 6px rgba(41,128,185,0.2);
+    }
+    .pathway-content { flex: 1; padding-top: 0.6rem; }
+    .pathway-step-num { font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--neuro-light); margin-bottom: 0.3rem; }
+    .pathway-title { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; color: var(--ink); margin-bottom: 0.5rem; }
+    .pathway-text { font-size: 0.78rem; line-height: 1.75; color: #3d3028; max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+    .pathway-step.active .pathway-text { max-height: 300px; }
+    .pathway-short { font-size: 0.72rem; color: var(--muted); }
+
+    /* ── POTENTIEL D'ACTION ── */
+    .pa-demo {
+      background: #0a1520;
+      border-radius: 2px;
+      padding: 2.5rem;
+      margin: 2rem 0;
+    }
+    .pa-demo h3 { color: var(--neuro-light); margin-bottom: 0.5rem; }
+    .pa-demo p  { color: rgba(244,240,232,0.6); font-size: 0.78rem; max-width: 560px; }
+    .pa-canvas-wrap { margin: 1.5rem 0; background: rgba(0,0,0,0.3); border: 1px solid rgba(41,128,185,0.2); border-radius: 2px; padding: 0.5rem; }
+    .pa-canvas-wrap canvas { width: 100%; display: block; }
+    .pa-controls { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; margin-top: 1rem; }
+    .pa-btn { padding: 0.65rem 1.5rem; font-family: 'Josefin Sans', sans-serif; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; border: 1.5px solid rgba(41,128,185,0.4); background: rgba(41,128,185,0.1); color: var(--neuro-light); cursor: pointer; transition: all 0.2s; }
+    .pa-btn:hover { background: rgba(41,128,185,0.25); border-color: var(--neuro-light); }
+    .pa-btn.active { background: var(--neuro); color: white; border-color: var(--neuro-light); }
+    .pa-freq-label { font-size: 0.65rem; letter-spacing: 0.1em; color: var(--muted); }
+
+    /* ── TONOTOPIE ── */
+    .tonotopie-wrap {
+      margin: 2rem 0;
+      position: relative;
+    }
+    .tonotopie-svg { width: 100%; max-width: 700px; display: block; margin: 0 auto; }
+    .tono-info { margin-top: 1rem; padding: 1rem 1.5rem; background: var(--cream); border-left: 3px solid var(--neuro); display: none; font-size: 0.78rem; line-height: 1.75; color: #3d3028; }
+    .tono-info.visible { display: block; }
+    .tono-zone { cursor: pointer; transition: opacity 0.2s; }
+    .tono-zone:hover { opacity: 0.75; }
+
+    /* ── GLOSSAIRE ── */
+    .glossaire { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 1px; background: var(--line); border: 1.5px solid var(--line); margin: 2rem 0; }
+    .glossaire-item { background: var(--warm-white); padding: 1.5rem; }
+    .glossaire-term { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--neuro); margin-bottom: 0.4rem; }
+    .glossaire-def { font-size: 0.72rem; line-height: 1.7; color: #3d3028; }
+
+    footer { border-top: 1px solid var(--line); padding: 3rem 2rem; text-align: center; color: var(--muted); font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; margin-top: 4rem; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+    .chapter { animation: fadeUp 0.6s ease both; }
+    @media(max-width:600px){ .nav-links{display:none} }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html#sommaire">← Musée de l'Audition</a>
+  <ul class="nav-links">
+    <li><a href="#transduction">Transduction</a></li>
+    <li><a href="#potentiel">Potentiel d'action</a></li>
+    <li><a href="#tonotopie">Tonotopie</a></li>
+    <li><a href="#cerveau">Cerveau</a></li>
+  </ul>
+</nav>
+
+<header class="page-header">
+  <div class="page-header-content">
+    <div class="chapter-label">Chapitre 07 · Exposition permanente</div>
+    <h1>Conversion du son<br><em>en message nerveux</em></h1>
+    <p class="page-intro">Comment une vibration de l'air devient-elle une sensation auditive dans le cerveau ? De la cellule ciliée au cortex auditif — la chaîne de transduction mécano-électrique.</p>
+  </div>
+  <div class="page-num">07</div>
+</header>
+
+<div class="section-nav">
+  <a href="#transduction">I. La transduction</a>
+  <a href="#potentiel">II. Potentiel d'action</a>
+  <a href="#tonotopie">III. Tonotopie</a>
+  <a href="#cerveau">IV. Vers le cerveau</a>
+</div>
+
+<main>
+
+  <!-- ══ I. TRANSDUCTION ══ -->
+  <section class="chapter" id="transduction">
+    <div class="section-label">I · La transduction mécano-électrique</div>
+    <h2>Le parcours du son — cliquez sur chaque étape</h2>
+    <p>La conversion d'une vibration sonore en influx nerveux est un processus en plusieurs étapes précises. Cliquez sur chaque étape pour la découvrir en détail.</p>
+    <div class="gold-rule"></div>
+
+    <div class="pathway">
+      <div class="pathway-line"></div>
+
+      <div class="pathway-step" onclick="toggleStep(this)">
+        <div class="pathway-dot">🌊</div>
+        <div class="pathway-content">
+          <div class="pathway-step-num">Étape 1</div>
+          <div class="pathway-title">L'onde sonore arrive au tympan</div>
+          <div class="pathway-short">Les variations de pression de l'air font vibrer le tympan.</div>
+          <div class="pathway-text">Les ondes de pression sonore, après avoir traversé le canal auditif externe, frappent le tympan. Cette fine membrane (~9 mm) se déforme en suivant exactement les variations de pression : elle se déplace vers l'intérieur lors des compressions, vers l'extérieur lors des raréfactions. L'amplitude de ce déplacement peut être inférieure au diamètre d'un atome pour les sons très faibles.</div>
+        </div>
+      </div>
+
+      <div class="pathway-step" onclick="toggleStep(this)">
+        <div class="pathway-dot">⚙️</div>
+        <div class="pathway-content">
+          <div class="pathway-step-num">Étape 2</div>
+          <div class="pathway-title">Amplification par les osselets</div>
+          <div class="pathway-short">La chaîne marteau-enclume-étrier amplifie et transmet les vibrations.</div>
+          <div class="pathway-text">Les vibrations du tympan sont transmises au marteau, puis à l'enclume, puis à l'étrier via trois articulations synoviales. Ce système de levier, combiné à la différence de surface entre le tympan (~55 mm²) et la platine de l'étrier (~3,2 mm²), amplifie la pression d'un facteur d'environ 22. Cette adaptation d'impédance est essentielle : sans elle, plus de 99,9 % de l'énergie sonore serait réfléchie à l'interface air/liquide cochléaire.</div>
+        </div>
+      </div>
+
+      <div class="pathway-step" onclick="toggleStep(this)">
+        <div class="pathway-dot">💧</div>
+        <div class="pathway-content">
+          <div class="pathway-step-num">Étape 3</div>
+          <div class="pathway-title">Mise en mouvement des fluides cochléaires</div>
+          <div class="pathway-short">La platine de l'étrier crée des ondes dans la périlymphe.</div>
+          <div class="pathway-text">La platine de l'étrier s'appuie sur la fenêtre ovale et y crée des ondes de pression dans la périlymphe (liquide riche en sodium qui remplit les rampes vestibulaire et tympanique). Ces ondes se propagent de la base vers l'apex de la cochlée et déforment la membrane basilaire sur leur passage. La fenêtre ronde, à l'autre extrémité, permet à la périlymphe de se déplacer librement (les liquides sont incompressibles).</div>
+        </div>
+      </div>
+
+      <div class="pathway-step" onclick="toggleStep(this)">
+        <div class="pathway-dot">〰️</div>
+        <div class="pathway-content">
+          <div class="pathway-step-num">Étape 4</div>
+          <div class="pathway-title">Vibration de la membrane basilaire</div>
+          <div class="pathway-short">Chaque fréquence fait vibrer une zone précise de la membrane.</div>
+          <div class="pathway-text">La membrane basilaire n'est pas uniforme : elle est étroite et rigide à la base (sensible aux hautes fréquences) et large et souple à l'apex (sensible aux basses fréquences). Les ondes de pression créent un « maximum de déplacement » à un endroit précis selon leur fréquence — c'est la base de la tonotopie cochléaire. Cette propriété mécanique passive permet à la cochlée de réaliser une analyse spectrale du son avant même toute transduction électrique.</div>
+        </div>
+      </div>
+
+      <div class="pathway-step" onclick="toggleStep(this)">
+        <div class="pathway-dot">🔬</div>
+        <div class="pathway-content">
+          <div class="pathway-step-num">Étape 5</div>
+          <div class="pathway-title">Déflexion des stéréocils</div>
+          <div class="pathway-short">Les cils des cellules ciliées se courbent — la transduction commence.</div>
+          <div class="pathway-text">Les cellules ciliées de l'organe de Corti reposent sur la membrane basilaire. Leurs stéréocils (touffes de filaments protéiques) sont en contact avec la membrane tectoriale au-dessus. Lorsque la membrane basilaire vibre, le cisaillement entre elle et la membrane tectoriale fait basculer les stéréocils. Ce déplacement mécanique — de l'ordre du nanomètre — ouvre ou ferme des canaux ioniques mécanosensibles à leur sommet.</div>
+        </div>
+      </div>
+
+      <div class="pathway-step" onclick="toggleStep(this)">
+        <div class="pathway-dot">⚡</div>
+        <div class="pathway-content">
+          <div class="pathway-step-num">Étape 6</div>
+          <div class="pathway-title">Entrée des ions & dépolarisation</div>
+          <div class="pathway-short">L'ouverture des canaux ioniques génère un courant électrique.</div>
+          <div class="pathway-text">L'endolymphe (qui baigne les stéréocils) est très riche en ions potassium K⁺. Lorsque les canaux s'ouvrent sous l'effet de la déflexion des cils, les ions K⁺ entrent massivement dans la cellule ciliée, dépolarisant sa membrane. Cette dépolarisation est la conversion du signal mécanique en signal électrique — c'est la transduction proprement dite. Elle provoque l'ouverture de canaux calciques au pôle basal de la cellule.</div>
+        </div>
+      </div>
+
+      <div class="pathway-step" onclick="toggleStep(this)">
+        <div class="pathway-dot">🧪</div>
+        <div class="pathway-content">
+          <div class="pathway-step-num">Étape 7</div>
+          <div class="pathway-title">Libération du neurotransmetteur</div>
+          <div class="pathway-short">Le glutamate est libéré et stimule le nerf auditif.</div>
+          <div class="pathway-text">L'entrée de calcium (Ca²⁺) par les canaux calciques déclenche la fusion de vésicules synaptiques avec la membrane basale de la cellule ciliée interne. Ces vésicules libèrent du <strong>glutamate</strong> dans la synapse ruban, un type de synapse spécialisé capable de libérer des neurotransmetteurs avec une précision temporelle remarquable. Le glutamate se fixe sur les récepteurs des dendrites des neurones bipolaires du ganglion spiral.</div>
+        </div>
+      </div>
+
+      <div class="pathway-step" onclick="toggleStep(this)">
+        <div class="pathway-dot">📡</div>
+        <div class="pathway-content">
+          <div class="pathway-step-num">Étape 8</div>
+          <div class="pathway-title">Potentiel d'action dans le nerf auditif</div>
+          <div class="pathway-short">L'influx nerveux remonte vers le cerveau.</div>
+          <div class="pathway-text">La fixation du glutamate sur les récepteurs post-synaptiques génère un potentiel d'action dans les fibres du nerf cochléaire. Ces potentiels d'action — impulsions électriques « tout ou rien » d'environ 100 mV — se propagent le long des 30 000 fibres du nerf auditif vers les noyaux cochléaires du tronc cérébral, puis vers le colliculus inférieur, le corps genouillé médian du thalamus, et enfin le cortex auditif primaire du lobe temporal.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ II. POTENTIEL D'ACTION ══ -->
+  <section class="chapter" id="potentiel">
+    <div class="section-label">II · Le potentiel d'action</div>
+    <h2>Visualiser l'influx nerveux</h2>
+    <p>Un potentiel d'action est une impulsion électrique brève et stéréotypée qui se propage le long d'un neurone. C'est l'unité de base du code neuronal. Observez comment la fréquence de décharge varie avec l'intensité du stimulus.</p>
+    <div class="gold-rule"></div>
+
+    <div class="pa-demo">
+      <h3>⚡ Simulateur de potentiels d'action</h3>
+      <p style="margin-top:.4rem">Choisissez une intensité de stimulus pour voir changer la fréquence de décharge du neurone auditif.</p>
+
+      <div class="pa-canvas-wrap">
+        <canvas id="pa-canvas" height="100"></canvas>
+      </div>
+
+      <div class="pa-controls">
+        <button class="pa-btn" onclick="setPaRate(3, this)">Son faible</button>
+        <button class="pa-btn active" onclick="setPaRate(8, this)">Son moyen</button>
+        <button class="pa-btn" onclick="setPaRate(18, this)">Son fort</button>
+        <button class="pa-btn" onclick="setPaRate(0, this)">Silence</button>
+        <span class="pa-freq-label" id="pa-label">8 potentiels/s</span>
+      </div>
+
+      <div style="margin-top:1.5rem; font-size:0.72rem; color:rgba(244,240,232,0.5); line-height:1.8; max-width:560px">
+        Le code neuronal auditif repose principalement sur la <strong>fréquence de décharge</strong> : plus le son est intense, plus les neurones « tirent » souvent (jusqu'à ~300 potentiels/s). La fréquence du son, elle, est codée par la <em>tonotopie</em> (quelle fibre s'active) et le <em>phase-locking</em> (synchronisation des décharges avec la phase de l'onde sonore, jusqu'à ~3–4 kHz).
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h3>Tout ou rien</h3>
+        <p>Un potentiel d'action est un phénomène « tout ou rien » : soit le seuil de dépolarisation est atteint et l'impulsion se produit avec une amplitude constante (~100 mV), soit rien ne se passe. L'information sonore n'est donc pas encodée dans l'amplitude des potentiels, mais dans leur fréquence et dans le choix des fibres actives.</p>
+      </div>
+      <div>
+        <h3>Période réfractaire</h3>
+        <p>Après chaque potentiel d'action, le neurone traverse une <strong>période réfractaire</strong> (~1–2 ms) pendant laquelle il ne peut pas être restimulé. Ceci limite la fréquence maximale de décharge à environ 300–500 Hz — un neurone seul ne peut donc pas coder les fréquences sonores élevées par phase-locking, mais un ensemble de neurones en peut le faire par relais.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ III. TONOTOPIE ══ -->
+  <section class="chapter" id="tonotopie">
+    <div class="section-label">III · La tonotopie cochléaire</div>
+    <h2>Une carte des fréquences dans la cochlée</h2>
+    <p>La cochlée est organisée de façon <strong>tonotopique</strong> : chaque fréquence sonore active préférentiellement une zone précise de la membrane basilaire et, par extension, un groupe particulier de fibres nerveuses. Cliquez sur les zones de la cochlée pour explorer.</p>
+    <div class="gold-rule"></div>
+
+    <div class="tonotopie-wrap">
+      <!-- Cochlée schématisée en SVG interactif -->
+      <svg class="tonotopie-svg" viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg">
+        <!-- Spiral simplifié -->
+        <defs>
+          <linearGradient id="tonoGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%"   stop-color="#c0392b"/>
+            <stop offset="25%"  stop-color="#e67e22"/>
+            <stop offset="50%"  stop-color="#f1c40f"/>
+            <stop offset="75%"  stop-color="#27ae60"/>
+            <stop offset="100%" stop-color="#2980b9"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Bande tonotopique principale -->
+        <rect x="30" y="120" width="640" height="60" rx="4" fill="url(#tonoGrad)" opacity="0.85"/>
+
+        <!-- Étiquettes fréquences -->
+        <text x="30"  y="112" font-size="11" font-family="sans-serif" fill="#c0392b" text-anchor="middle">BASE</text>
+        <text x="670" y="112" font-size="11" font-family="sans-serif" fill="#2980b9" text-anchor="middle">APEX</text>
+
+        <!-- Zones cliquables avec étiquettes -->
+        <g class="tono-zone" onclick="showTono('20kHz')">
+          <rect x="30" y="120" width="100" height="60" rx="0" fill="transparent" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+          <text x="80" y="155" font-size="12" font-family="sans-serif" fill="white" text-anchor="middle" font-weight="bold">20 kHz</text>
+          <text x="80" y="170" font-size="9"  font-family="sans-serif" fill="rgba(255,255,255,0.7)" text-anchor="middle">Très aigu</text>
+        </g>
+        <g class="tono-zone" onclick="showTono('8kHz')">
+          <rect x="130" y="120" width="110" height="60" fill="transparent" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+          <text x="185" y="155" font-size="12" font-family="sans-serif" fill="white" text-anchor="middle" font-weight="bold">8 kHz</text>
+          <text x="185" y="170" font-size="9"  font-family="sans-serif" fill="rgba(255,255,255,0.7)" text-anchor="middle">Aigu</text>
+        </g>
+        <g class="tono-zone" onclick="showTono('4kHz')">
+          <rect x="240" y="120" width="110" height="60" fill="transparent" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+          <text x="295" y="155" font-size="12" font-family="sans-serif" fill="white" text-anchor="middle" font-weight="bold">4 kHz</text>
+          <text x="295" y="170" font-size="9"  font-family="sans-serif" fill="rgba(255,255,255,0.7)" text-anchor="middle">Médium aigu</text>
+        </g>
+        <g class="tono-zone" onclick="showTono('1kHz')">
+          <rect x="350" y="120" width="110" height="60" fill="transparent" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+          <text x="405" y="155" font-size="12" font-family="sans-serif" fill="white" text-anchor="middle" font-weight="bold">1 kHz</text>
+          <text x="405" y="170" font-size="9"  font-family="sans-serif" fill="rgba(255,255,255,0.7)" text-anchor="middle">Médium</text>
+        </g>
+        <g class="tono-zone" onclick="showTono('500Hz')">
+          <rect x="460" y="120" width="100" height="60" fill="transparent" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+          <text x="510" y="155" font-size="12" font-family="sans-serif" fill="white" text-anchor="middle" font-weight="bold">500 Hz</text>
+          <text x="510" y="170" font-size="9"  font-family="sans-serif" fill="rgba(255,255,255,0.7)" text-anchor="middle">Grave</text>
+        </g>
+        <g class="tono-zone" onclick="showTono('20Hz')">
+          <rect x="560" y="120" width="110" height="60" rx="0" fill="transparent" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+          <text x="615" y="155" font-size="12" font-family="sans-serif" fill="white" text-anchor="middle" font-weight="bold">20 Hz</text>
+          <text x="615" y="170" font-size="9"  font-family="sans-serif" fill="rgba(255,255,255,0.7)" text-anchor="middle">Très grave</text>
+        </g>
+
+        <!-- Flèches -->
+        <text x="350" y="220" font-size="10" font-family="sans-serif" fill="#8a7968" text-anchor="middle">← Sons aigus — base (rigide, étroite) · · · apex (souple, large) — Sons graves →</text>
+        <text x="350" y="260" font-size="10" font-family="sans-serif" fill="#8a7968" text-anchor="middle">Cliquez sur une zone pour en savoir plus</text>
+      </svg>
+
+      <div class="tono-info" id="tono-info">
+        <strong id="tono-title"></strong><br>
+        <span id="tono-text"></span>
+      </div>
+    </div>
+
+    <div class="note-box">Cette organisation tonotopique se maintient tout au long de la voie auditive : du nerf auditif aux noyaux du tronc cérébral, du thalamus jusqu'au cortex auditif primaire. On parle de tonotopie centrale — le cerveau conserve une « carte » des fréquences organisée anatomiquement.</div>
+  </section>
+
+  <!-- ══ IV. VERS LE CERVEAU ══ -->
+  <section class="chapter" id="cerveau">
+    <div class="section-label">IV · De la cochlée au cortex</div>
+    <h2>La voie auditive centrale</h2>
+    <p>Une fois les potentiels d'action générés dans le nerf auditif, l'information sonore remonte une voie ascendante complexe avant d'atteindre le cortex cérébral où elle sera conscientisée.</p>
+    <div class="gold-rule"></div>
+
+    <div class="two-col">
+      <div>
+        <p>L'information emprunte la voie suivante :</p>
+        <ol style="font-size:.82rem;line-height:2;color:#3d3028;padding-left:1.5rem;max-width:400px">
+          <li><strong>Nerf cochléaire</strong> (~30 000 fibres)</li>
+          <li><strong>Noyaux cochléaires</strong> du tronc cérébral</li>
+          <li><strong>Olive supérieure</strong> (localisation spatiale)</li>
+          <li><strong>Colliculus inférieur</strong> (intégration)</li>
+          <li><strong>Corps genouillé médian</strong> du thalamus</li>
+          <li><strong>Cortex auditif primaire</strong> (aire de Heschl, lobe temporal)</li>
+          <li><strong>Cortex associatif</strong> (reconnaissance, mémoire)</li>
+        </ol>
+      </div>
+      <div>
+        <h3>Pourquoi autant d'étapes ?</h3>
+        <p>Chaque relais ajoute un traitement spécifique. L'olive supérieure compare les signaux des deux oreilles pour localiser les sons dans l'espace. Le colliculus inférieur intègre les réflexes auditifs. Le thalamus agit comme un filtre et un amplificateur sélectif — c'est lui qui décide ce qui mérite l'attention consciente.</p>
+        <h3 style="margin-top:1.5rem">Le cortex auditif</h3>
+        <p>Le cortex auditif primaire (gyrus temporal supérieur) analyse les caractéristiques spectrales et temporelles du son. Les aires associatives permettent la reconnaissance des mots, de la musique, des voix familières — le son devient enfin <em>sens</em>.</p>
+      </div>
+    </div>
+
+    <div class="glossaire">
+      <div class="glossaire-item"><div class="glossaire-term">Transduction</div><div class="glossaire-def">Conversion d'une forme d'énergie en une autre. Ici : énergie mécanique (vibration) → énergie électrique (potentiel de membrane).</div></div>
+      <div class="glossaire-item"><div class="glossaire-term">Stéréocils</div><div class="glossaire-def">Touffes de filaments actine sur le pôle apical des cellules ciliées. Leur déflexion ouvre des canaux ioniques mécanosensibles.</div></div>
+      <div class="glossaire-item"><div class="glossaire-term">Potentiel d'action</div><div class="glossaire-def">Impulsion électrique « tout ou rien » (~100 mV, 1–2 ms) qui se propage le long de l'axone d'un neurone sans atténuation.</div></div>
+      <div class="glossaire-item"><div class="glossaire-term">Tonotopie</div><div class="glossaire-def">Organisation spatiale de la sensibilité fréquentielle dans la cochlée et la voie auditive : chaque fréquence active une zone précise.</div></div>
+      <div class="glossaire-item"><div class="glossaire-term">Synapse ruban</div><div class="glossaire-def">Synapse spécialisée des cellules ciliées internes, capable de libérer du glutamate de façon très rapide et soutenue.</div></div>
+      <div class="glossaire-item"><div class="glossaire-term">Phase-locking</div><div class="glossaire-def">Synchronisation des potentiels d'action avec une phase particulière de l'onde sonore. Permet de coder les fréquences jusqu'à ~3–4 kHz.</div></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>Musée de l'Audition &nbsp;·&nbsp; Chapitre 07 — Conversion en message nerveux</p>
+  <p style="margin-top:.5rem"><a href="index.html" style="color:var(--gold);text-decoration:none">← Retour au sommaire</a></p>
+</footer>
+
+<script>
+// ══ PARCOURS ÉTAPES ══
+function toggleStep(el) {
+  const isOpen = el.classList.contains('active');
+  document.querySelectorAll('.pathway-step').forEach(s => s.classList.remove('active'));
+  if (!isOpen) el.classList.add('active');
+}
+
+// ══ POTENTIEL D'ACTION ══
+const paCanvas = document.getElementById('pa-canvas');
+const paCtx    = paCanvas.getContext('2d');
+let paRate = 8, paPhase = 0, paRaf = null, paSpikes = [];
+
+function setPaRate(rate, btn) {
+  paRate = rate;
+  document.querySelectorAll('.pa-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('pa-label').textContent = rate === 0 ? 'Silence' : rate + ' potentiels/s';
+  paSpikes = [];
+}
+
+function drawPA() {
+  const W = paCanvas.offsetWidth; paCanvas.width = W;
+  const H = paCanvas.height;
+  paCtx.clearRect(0,0,W,H);
+
+  // Fond
+  paCtx.fillStyle = 'rgba(0,0,0,0)';
+  // Ligne de base
+  paCtx.strokeStyle = 'rgba(41,128,185,0.3)'; paCtx.lineWidth=1;
+  paCtx.beginPath(); paCtx.moveTo(0,H*0.75); paCtx.lineTo(W,H*0.75); paCtx.stroke();
+  // Label
+  paCtx.fillStyle='rgba(93,173,226,0.4)'; paCtx.font='10px sans-serif';
+  paCtx.fillText('Potentiel de membrane', 8, H*0.72 - 4);
+
+  // Générer spikes
+  if (paRate > 0 && Math.random() < paRate/60) {
+    paSpikes.push({ x: W, age: 0 });
+  }
+
+  // Dessiner la ligne + spikes
+  paCtx.strokeStyle = '#5dade2'; paCtx.lineWidth = 1.5;
+  paCtx.beginPath();
+  let prevY = H * 0.75;
+  for (let px = 0; px <= W; px++) {
+    let y = H * 0.75;
+    for (const sp of paSpikes) {
+      const dx = px - (W - sp.age * 3);
+      if (dx >= 0 && dx < 8) {
+        // forme du potentiel d'action
+        if (dx < 2)       y = H * 0.75 - (dx/2) * H * 0.55;
+        else if (dx < 4)  y = H * 0.75 - H * 0.55 + (dx-2)/2 * H * 0.7;
+        else if (dx < 6)  y = H * 0.75 + H * 0.15 - (dx-4)/2 * H * 0.15;
+        else              y = H * 0.75;
+      }
+    }
+    if (px===0) paCtx.moveTo(px,y); else paCtx.lineTo(px,y);
+  }
+  paCtx.stroke();
+
+  // Vieillir les spikes
+  paSpikes.forEach(s => s.age++);
+  paSpikes = paSpikes.filter(s => s.age < W/3);
+
+  requestAnimationFrame(drawPA);
+}
+drawPA();
+
+// ══ TONOTOPIE ══
+const tonoData = {
+  '20kHz': { title:'20 000 Hz — Sons très aigus (base de la cochlée)', text:'La base de la cochlée, étroite et rigide, résonne à très haute fréquence. Les cellules ciliées à cet endroit sont parmi les premières à être endommagées par les traumatismes sonores et le vieillissement — c\'est pourquoi la perte auditive commence toujours par les aigus.' },
+  '8kHz':  { title:'8 000 Hz — Sons aigus', text:'Zone correspondant aux consonnes sibilantes (s, ch, f). La perte d\'audition dans cette zone rend difficile la compréhension de la parole, même si la personne entend encore les voyelles. Les acouphènes post-concert se produisent souvent dans cette plage.' },
+  '4kHz':  { title:'4 000 Hz — Zone de sensibilité maximale', text:'L\'oreille humaine est naturellement la plus sensible autour de 2 000–4 000 Hz — précisément la plage fréquentielle de la voix humaine. Un son à 4 kHz est perçu comme plus fort qu\'un son de même intensité physique à 100 Hz.' },
+  '1kHz':  { title:'1 000 Hz — Sons médiums', text:'Zone centrale de la plage vocale. Un diapaon de référence vibre à 440 Hz (La), et la majorité de l\'intelligibilité de la parole se concentre entre 500 Hz et 3 000 Hz. C\'est la zone la mieux protégée dans la cochlée.' },
+  '500Hz': { title:'500 Hz — Sons graves', text:'Voyelles et notes basses des instruments. La membrane basilaire est ici plus large et plus souple. Ces fréquences sont généralement mieux préservées dans les surdités acquises car elles correspondent à la zone apicale, moins exposée.' },
+  '20Hz':  { title:'20 Hz — Infrasons / seuil grave (apex de la cochlée)', text:'L\'apex de la cochlée, large et très souple, vibre aux très basses fréquences. En dessous de 20 Hz, on parle d\'infrasons — imperceptibles comme sons mais parfois ressentis comme vibrations corporelles. Cette zone est rarement atteinte dans les surdités courantes.' },
+};
+
+function showTono(key) {
+  const d = tonoData[key];
+  document.getElementById('tono-title').textContent = d.title;
+  document.getElementById('tono-text').textContent  = d.text;
+  document.getElementById('tono-info').classList.add('visible');
+}
+</script>
+</body>
+</html>

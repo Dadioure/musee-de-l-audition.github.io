@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>08 · Les Risques — Musée de l'Audition</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@200;300;400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #f4f0e8; --warm-white: #faf8f4; --ink: #1a1410;
+      --brown: #5c3d2e; --gold: #b8960c; --gold-light: #d4b44a;
+      --muted: #8a7968; --line: #d8d0c0;
+      --danger: #c0392b; --danger-light: #e74c3c; --danger-pale: #fdf0ee;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Josefin Sans', sans-serif; background: var(--warm-white); color: var(--ink); overflow-x: hidden; }
+
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(26,20,16,0.97); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(184,150,12,0.2); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 3.5rem; }
+    .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-style: italic; color: var(--gold-light); letter-spacing: 0.05em; text-decoration: none; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--gold-light); }
+
+    .page-header { background: #1a0505; padding: 5rem 2rem 4rem; position: relative; overflow: hidden; }
+    .page-header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 80% at 80% 50%, rgba(192,57,43,0.2) 0%, transparent 60%); }
+    .page-num { font-family: 'Cormorant Garamond', serif; font-size: 8rem; font-weight: 300; color: rgba(192,57,43,0.12); line-height: 1; position: absolute; right: 2rem; bottom: -1rem; }
+    .page-header-content { max-width: 700px; position: relative; }
+    .chapter-label { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: #e74c3c; margin-bottom: 1.5rem; }
+    .page-header h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 300; color: var(--cream); line-height: 1.1; }
+    .page-header h1 em { font-style: italic; color: #e74c3c; }
+    .page-intro { margin-top: 1.5rem; font-size: 0.8rem; letter-spacing: 0.06em; color: var(--muted); line-height: 1.8; max-width: 560px; }
+
+    .section-nav { background: var(--cream); border-bottom: 1px solid var(--line); padding: 0 2rem; display: flex; overflow-x: auto; }
+    .section-nav a { padding: 1rem 1.5rem; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); text-decoration: none; white-space: nowrap; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s; }
+    .section-nav a:hover { color: var(--ink); border-color: var(--danger); }
+
+    main { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+    section.chapter { padding: 5rem 0; border-bottom: 1px solid var(--line); }
+    section.chapter:last-child { border-bottom: none; }
+    .section-label { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--danger); margin-bottom: 2.5rem; display: flex; align-items: center; gap: 1rem; }
+    .section-label::after { content:''; flex:1; height:1px; background:var(--line); }
+    h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 300; line-height: 1.2; margin-bottom: 1.5rem; }
+    h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 400; margin-bottom: 1rem; color: var(--brown); }
+    p { font-size: 0.82rem; line-height: 1.85; color: #3d3028; max-width: 680px; letter-spacing: 0.03em; margin-bottom: 1rem; }
+    .gold-rule { width:3rem; height:1px; background:var(--danger); margin: 2rem 0; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; margin: 2rem 0; }
+    @media(max-width:700px){ .two-col { grid-template-columns: 1fr; } }
+
+    /* ── JAUGE DÉCIBELS INTERACTIVE ── */
+    .db-meter {
+      background: var(--ink);
+      border-radius: 2px;
+      padding: 2.5rem;
+      margin: 2rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .db-meter-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem; color: var(--cream); margin-bottom: 0.5rem;
+    }
+    .db-meter-sub {
+      font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 2rem;
+    }
+    .db-track {
+      position: relative; height: 48px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 3px; overflow: hidden; margin-bottom: 0.75rem;
+    }
+    .db-fill {
+      position: absolute; left: 0; top: 0; height: 100%;
+      border-radius: 3px;
+      transition: width 0.4s ease, background 0.4s ease;
+    }
+    .db-label-row {
+      display: flex; justify-content: space-between;
+      font-size: 0.58rem; letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.3); margin-bottom: 2rem;
+    }
+    .db-slider-wrap { margin-top: 1rem; }
+    .db-slider-label {
+      font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--muted); display: flex; justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    .db-val { font-family: 'Cormorant Garamond', serif; font-size: 3rem; font-weight: 300; color: white; margin: 1rem 0 0.25rem; line-height: 1; }
+    .db-source-name { font-size: 0.75rem; letter-spacing: 0.1em; color: var(--gold-light); min-height: 1.2rem; }
+    .db-risk-msg { font-size: 0.72rem; line-height: 1.6; color: rgba(255,255,255,0.55); margin-top: 0.75rem; min-height: 2.5rem; }
+    .db-time-msg { font-size: 0.68rem; color: var(--danger-light); margin-top: 0.4rem; min-height: 1.2rem; font-style: italic; }
+
+    input[type=range] { -webkit-appearance: none; width: 100%; height: 3px; background: rgba(255,255,255,0.15); border-radius: 2px; outline: none; }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--gold); cursor: pointer; }
+
+    /* ── LIEUX À RISQUE ── */
+    .lieu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5px; background: var(--line); border: 1.5px solid var(--line);
+      margin: 2rem 0;
+    }
+    .lieu-card {
+      background: var(--warm-white);
+      padding: 0;
+      overflow: hidden;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .lieu-card:hover { background: var(--cream); }
+    .lieu-img {
+      width: 100%; aspect-ratio: 16/9;
+      object-fit: cover; display: block;
+    }
+    .lieu-img-placeholder {
+      width: 100%; aspect-ratio: 16/9;
+      background: var(--cream);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 0.4rem; font-size: 0.6rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .lieu-img-placeholder span { font-size: 2rem; opacity: 0.2; }
+    .lieu-body { padding: 1.5rem; }
+    .lieu-db {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem; font-weight: 300; color: var(--danger);
+      line-height: 1; margin-bottom: 0.4rem;
+    }
+    .lieu-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; color: var(--ink); margin-bottom: 0.5rem;
+    }
+    .lieu-desc { font-size: 0.7rem; color: var(--muted); line-height: 1.65; letter-spacing: 0.04em; }
+    .lieu-bar { height: 3px; background: var(--line); margin-top: 1rem; }
+    .lieu-bar-fill { height: 100%; background: var(--danger); transition: width 0.6s ease; }
+
+    /* ── CONSÉQUENCES ── */
+    .consequence-list { display: flex; flex-direction: column; gap: 1px; background: var(--line); border: 1.5px solid var(--line); margin: 2rem 0; }
+    .consequence-item {
+      background: var(--warm-white);
+      padding: 1.5rem 2rem;
+      display: flex; gap: 1.5rem; align-items: flex-start;
+      cursor: pointer; transition: background 0.2s;
+      position: relative;
+    }
+    .consequence-item:hover { background: var(--cream); }
+    .consequence-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 0.1rem; }
+    .consequence-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem; color: var(--ink); margin-bottom: 0.4rem;
+    }
+    .consequence-short { font-size: 0.75rem; color: var(--muted); line-height: 1.6; }
+    .consequence-detail {
+      font-size: 0.78rem; color: #3d3028; line-height: 1.75;
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.4s ease, margin-top 0.3s;
+    }
+    .consequence-detail.open { max-height: 300px; margin-top: 0.75rem; }
+    .consequence-arrow {
+      position: absolute; right: 1.5rem; top: 1.75rem;
+      font-size: 0.7rem; color: var(--muted);
+      transition: transform 0.3s;
+    }
+    .consequence-item.open .consequence-arrow { transform: rotate(90deg); }
+
+    /* ── ACOUPHÈNE DÉMO ── */
+    .acouphene-box {
+      background: var(--ink); border-radius: 2px;
+      padding: 2.5rem; margin: 2rem 0; color: var(--cream);
+    }
+    .acouphene-box h3 { color: var(--gold-light); font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .acouphene-box p { color: rgba(244,240,232,0.65); font-size: 0.78rem; max-width: 560px; }
+
+    .acouphene-types { display: flex; gap: 1rem; flex-wrap: wrap; margin: 1.5rem 0; }
+    .acouphene-btn {
+      padding: 0.75rem 1.5rem;
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+      border: 1.5px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.04);
+      color: var(--cream); cursor: pointer; transition: all 0.2s;
+      border-radius: 1px;
+    }
+    .acouphene-btn:hover { border-color: var(--gold); color: var(--gold-light); background: rgba(184,150,12,0.08); }
+    .acouphene-btn.playing { background: rgba(192,57,43,0.2); border-color: var(--danger-light); color: var(--danger-light); }
+
+    .acouphene-visual {
+      height: 60px; background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 2px; margin: 1rem 0;
+      position: relative; overflow: hidden;
+    }
+    .acouphene-wave-canvas { width: 100%; height: 100%; display: block; }
+
+    .stop-acouphene {
+      padding: 0.6rem 1.5rem;
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+      border: 1.5px solid rgba(255,255,255,0.15);
+      background: transparent; color: var(--muted);
+      cursor: pointer; transition: all 0.2s;
+    }
+    .stop-acouphene:hover { border-color: var(--danger); color: var(--danger-light); }
+
+    .warn-box {
+      background: var(--danger-pale); border-left: 3px solid var(--danger);
+      padding: 1.2rem 1.8rem; margin: 2rem 0;
+      font-size: 0.78rem; line-height: 1.7; color: #5a1010; max-width: 700px;
+    }
+    .note-box { background: var(--cream); border-left: 3px solid var(--gold); padding: 1.2rem 1.8rem; margin: 2rem 0; font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-style: italic; color: var(--brown); line-height: 1.6; max-width: 700px; }
+    .img-caption { text-align: center; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-top: 0.5rem; margin-bottom: 1.5rem; }
+
+    footer { border-top: 1px solid var(--line); padding: 3rem 2rem; text-align: center; color: var(--muted); font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; margin-top: 4rem; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+    .chapter { animation: fadeUp 0.6s ease both; }
+    @media(max-width:600px){ .nav-links{display:none} }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html#sommaire">← Musée de l'Audition</a>
+  <ul class="nav-links">
+    <li><a href="#seuils">Seuils</a></li>
+    <li><a href="#lieux">Lieux à risque</a></li>
+    <li><a href="#consequences">Conséquences</a></li>
+    <li><a href="#acouphenes">Acouphènes</a></li>
+  </ul>
+</nav>
+
+<header class="page-header">
+  <div class="page-header-content">
+    <div class="chapter-label">Chapitre 08 · Exposition permanente</div>
+    <h1>Les <em>Risques</em><br>auditifs</h1>
+    <p class="page-intro">Le bruit est la première cause de surdité évitable dans le monde. Comprendre les seuils de danger, les lieux à risque et les conséquences d'une exposition excessive pour mieux protéger son audition.</p>
+  </div>
+  <div class="page-num">08</div>
+</header>
+
+<div class="section-nav">
+  <a href="#seuils">I. Seuils de danger</a>
+  <a href="#lieux">II. Lieux à risque</a>
+  <a href="#consequences">III. Conséquences</a>
+  <a href="#acouphenes">IV. Acouphènes</a>
+</div>
+
+<main>
+
+  <!-- ══ I. SEUILS ══ -->
+  <section class="chapter" id="seuils">
+    <div class="section-label">I · Seuils de danger & de douleur</div>
+    <h2>À partir de quand le son devient-il dangereux ?</h2>
+    <p>Le son devient potentiellement dangereux à partir de <strong>85 dB</strong>, principalement en cas d'exposition prolongée. La règle est simple : plus le son est fort, moins le temps d'exposition sans risque est long. À <strong>120 dB</strong>, la douleur et les lésions peuvent survenir quasi immédiatement.</p>
+    <div class="gold-rule"></div>
+
+    <!-- JAUGE INTERACTIVE -->
+    <div class="db-meter">
+      <div class="db-meter-title">Explorez l'échelle des décibels</div>
+      <div class="db-meter-sub">Faites glisser le curseur pour découvrir chaque niveau sonore</div>
+
+      <div class="db-val" id="db-val">60 dB</div>
+      <div class="db-source-name" id="db-source">Conversation normale</div>
+
+      <div class="db-track" style="margin-top:1.2rem">
+        <div class="db-fill" id="db-fill" style="width:50%"></div>
+      </div>
+      <div class="db-label-row">
+        <span>0 dB<br>Silence</span>
+        <span>40 dB<br>Bibliothèque</span>
+        <span>85 dB<br>⚠ Danger</span>
+        <span>120 dB<br>Douleur</span>
+        <span>140 dB<br>Avion</span>
+      </div>
+
+      <div class="db-risk-msg" id="db-risk"></div>
+      <div class="db-time-msg" id="db-time"></div>
+
+      <div class="db-slider-wrap">
+        <div class="db-slider-label"><span>Niveau sonore</span><span id="db-slider-val">60 dB</span></div>
+        <input type="range" id="db-slider" min="0" max="140" value="60" step="1"/>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h3>Seuil de danger — 85 dB</h3>
+        <p>C'est la limite fixée par la réglementation européenne pour l'exposition professionnelle sur 8 heures. En dessous, le risque est faible. Au-delà, les cellules ciliées de la cochlée commencent à subir des contraintes mécaniques répétées qui peuvent aboutir à leur destruction progressive.</p>
+      </div>
+      <div>
+        <h3>Seuil de douleur — 120 dB</h3>
+        <p>À ce niveau, la sensation douloureuse est immédiate. Le tympan et les osselets peuvent être endommagés mécaniquement. Une seule exposition à un son supérieur à 130–140 dB (explosion, détonation) peut provoquer une surdité brutale irréversible.</p>
+      </div>
+    </div>
+
+    <div class="warn-box">
+      ⚠ <strong>Règle des 3 dB :</strong> chaque augmentation de 3 dB double l'énergie sonore reçue par l'oreille. Une exposition sans risque de 8h à 85 dB devient risquée en seulement 4h à 88 dB, 2h à 91 dB, et 15 minutes à 100 dB.
+    </div>
+  </section>
+
+  <!-- ══ II. LIEUX ══ -->
+  <section class="chapter" id="lieux">
+    <div class="section-label">II · Lieux & situations à risque</div>
+    <h2>Les environnements dangereux pour l'audition</h2>
+    <p>Ces situations du quotidien peuvent exposer l'oreille à des niveaux sonores bien supérieurs au seuil de danger. La durée d'exposition est aussi importante que le niveau.</p>
+    <div class="gold-rule"></div>
+
+    <div class="lieu-grid">
+
+      <div class="lieu-card">
+        <!--
+          Remplacer par :
+          <img class="lieu-img" src="images/concert.jpg" alt="Concert / festival"/>
+        -->
+        <img src="images/concert.jpg" alt="Concert"/>
+        <div class="lieu-body">
+          <div class="lieu-db">110–120 dB</div>
+          <div class="lieu-name">Concerts & festivals</div>
+          <div class="lieu-desc">Devant les enceintes, le niveau peut dépasser 120 dB. Même quelques heures à ce niveau peuvent provoquer une fatigue auditive durable ou des acouphènes temporaires — parfois permanents.</div>
+          <div class="lieu-bar"><div class="lieu-bar-fill" style="width:85%"></div></div>
+        </div>
+      </div>
+
+      <div class="lieu-card">
+        <img src="images/ecouteur.jpg" alt="Ecouteurs"/>
+        <div class="lieu-body">
+          <div class="lieu-db">85–105 dB</div>
+          <div class="lieu-name">Écouteurs à volume élevé</div>
+          <div class="lieu-desc">À volume maximal, un smartphone peut délivrer jusqu'à 105 dB. Écouter 1h par jour à 80 % du volume maximal pendant des années suffit à provoquer une perte auditive précoce. Les jeunes sont particulièrement exposés.</div>
+          <div class="lieu-bar"><div class="lieu-bar-fill" style="width:72%"></div></div>
+        </div>
+      </div>
+
+      <div class="lieu-card">
+        <!--
+          Remplacer par :
+          <img class="lieu-img" src="images/chantier.jpg" alt="Chantier de construction"/>
+        -->
+        <img src="images/chantier.png" alt="Chantier"/>
+        <div class="lieu-body">
+          <div class="lieu-db">85–100 dB</div>
+          <div class="lieu-name">Chantiers de construction</div>
+          <div class="lieu-desc">Marteaux-piqueurs, perceuses et tronçonneuses dépassent régulièrement 90 dB. La réglementation impose le port de protections auditives au-delà de 85 dB d'exposition quotidienne. Sans protection, la surdité professionnelle est une des maladies du travail les plus répandues.</div>
+          <div class="lieu-bar"><div class="lieu-bar-fill" style="width:65%"></div></div>
+        </div>
+      </div>
+
+      <div class="lieu-card">
+        <img src="images/discothèque.jpg" alt="Discothèque"/>
+        <div class="lieu-body">
+          <div class="lieu-db">95–110 dB</div>
+          <div class="lieu-name">Discothèques & bars musicaux</div>
+          <div class="lieu-desc">Le niveau sonore moyen en discothèque avoisine 100–105 dB. Une soirée de 4h équivaut, en termes de dose sonore, à une journée entière à 85 dB. La réglementation française fixe un maximum légal de 102 dB en moyenne.</div>
+          <div class="lieu-bar"><div class="lieu-bar-fill" style="width:78%"></div></div>
+        </div>
+      </div>
+
+      <div class="lieu-card">
+        <img src="images/tondeuse.jpg" alt="Tondeuse"/>
+        <div class="lieu-body">
+          <div class="lieu-db">85–95 dB</div>
+          <div class="lieu-name">Outils bruyants — tondeuse, perceuse</div>
+          <div class="lieu-desc">Une tondeuse à gazon produit environ 90 dB, une perceuse entre 95 et 100 dB. Même une activité de bricolage du week-end, répétée régulièrement sans protection, contribue à une dégradation progressive de l'audition.</div>
+          <div class="lieu-bar"><div class="lieu-bar-fill" style="width:58%"></div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="note-box">Des bouchons d'oreille standard (mousse) atténuent de 20 à 35 dB. Des bouchons filtrants spéciaux pour concerts atténuent uniformément sur toutes les fréquences et permettent d'apprécier la musique sans distorsion — à environ 15 dB de moins.</div>
+  </section>
+
+  <!-- ══ III. CONSÉQUENCES ══ -->
+  <section class="chapter" id="consequences">
+    <div class="section-label">III · Conséquences sur la santé</div>
+    <h2>Ce que le bruit fait à l'oreille… et au corps</h2>
+    <p>Les effets d'une exposition excessive au bruit ne se limitent pas à l'oreille. Cliquez sur chaque conséquence pour en savoir plus.</p>
+    <div class="gold-rule"></div>
+
+    <div class="consequence-list">
+
+      <div class="consequence-item" onclick="toggleConsequence(this)">
+        <div class="consequence-icon">📉</div>
+        <div style="flex:1">
+          <div class="consequence-title">Perte auditive irréversible</div>
+          <div class="consequence-short">Diminution progressive de l'audition, surtout des sons aigus.</div>
+          <div class="consequence-detail">
+            Les cellules ciliées de la cochlée, détruites par les vibrations excessives, ne se régénèrent pas. La perte débute toujours par les hautes fréquences (4 000 Hz), ce qui explique qu'on commence par mal comprendre les consonnes (s, f, ch) avant de perdre les voyelles. La surdité liée au bruit est insidieuse : elle progresse sans douleur pendant des années avant d'être détectée. Un audiogramme réalisé par un ORL ou un audioprothésiste permet de la mesurer précisément.
+          </div>
+        </div>
+        <div class="consequence-arrow">›</div>
+      </div>
+
+      <div class="consequence-item" onclick="toggleConsequence(this)">
+        <div class="consequence-icon">🔔</div>
+        <div style="flex:1">
+          <div class="consequence-title">Acouphènes</div>
+          <div class="consequence-short">Bourdonnements ou sifflements persistants, sans source extérieure.</div>
+          <div class="consequence-detail">
+            Les acouphènes (du latin <em>tinnitus</em>) sont des sons perçus en l'absence de toute source sonore externe. Ils touchent 15 % de la population adulte, dont 2 % de façon invalidante. Après un concert ou une exposition intense, un acouphène temporaire (sifflement) peut apparaître — c'est le signe que les cellules ciliées ont été surmenées. S'il persiste plus de 24h, il peut devenir chronique. Il n'existe pas de traitement curatif, mais des thérapies sonores et cognitives peuvent aider à mieux les vivre.
+          </div>
+        </div>
+        <div class="consequence-arrow">›</div>
+      </div>
+
+      <div class="consequence-item" onclick="toggleConsequence(this)">
+        <div class="consequence-icon">😴</div>
+        <div style="flex:1">
+          <div class="consequence-title">Fatigue auditive</div>
+          <div class="consequence-short">Baisse temporaire de l'audition et sensation de « ouate » après exposition.</div>
+          <div class="consequence-detail">
+            La fatigue auditive, aussi appelée décalage temporaire de seuil, est une baisse provisoire de la sensibilité de l'oreille après une exposition sonore intense. L'oreille a besoin de plusieurs heures de calme pour récupérer. Si les expositions se répètent avant cette récupération complète, les dommages s'accumulent et peuvent devenir permanents. C'est pourquoi il est recommandé de s'éloigner régulièrement des zones bruyantes lors de longues expositions.
+          </div>
+        </div>
+        <div class="consequence-arrow">›</div>
+      </div>
+
+      <div class="consequence-item" onclick="toggleConsequence(this)">
+        <div class="consequence-icon">🌙</div>
+        <div style="flex:1">
+          <div class="consequence-title">Troubles du sommeil</div>
+          <div class="consequence-short">Le bruit nocturne perturbe le repos et génère fatigue chronique et stress.</div>
+          <div class="consequence-detail">
+            L'OMS recommande de ne pas dépasser 40 dB la nuit dans les chambres (équivalent à un bruit de fond de campagne). Au-delà, même sans réveil conscient, le cerveau enregistre les bruits et perturbe les cycles de sommeil. Une exposition chronique au bruit nocturne (trafic routier, voisinage) est associée à une augmentation du risque de maladies cardiovasculaires, d'hypertension et de troubles anxieux.
+          </div>
+        </div>
+        <div class="consequence-arrow">›</div>
+      </div>
+
+      <div class="consequence-item" onclick="toggleConsequence(this)">
+        <div class="consequence-icon">💬</div>
+        <div style="flex:1">
+          <div class="consequence-title">Impact sur la communication</div>
+          <div class="consequence-short">Difficultés à comprendre la parole, isolement social progressif.</div>
+          <div class="consequence-detail">
+            La perte auditive, même modérée, rend difficile la compréhension de la parole dans le bruit — en réunion, au restaurant, en famille. Cet effort de concentration constant épuise cognitivement. L'isolement progressif qui en résulte est associé à un risque accru de dépression et, selon certaines études récentes, à une forme de déclin cognitif plus précoce. La correction précoce par une prothèse auditive réduit significativement ces risques.
+          </div>
+        </div>
+        <div class="consequence-arrow">›</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══ IV. ACOUPHÈNES DÉMO ══ -->
+  <section class="chapter" id="acouphenes">
+    <div class="section-label">IV · Expérience — Simulateur d'acouphènes</div>
+    <h2>Comprendre les acouphènes par l'expérience</h2>
+    <p>Les acouphènes sont difficiles à décrire à quelqu'un qui n'en souffre pas. Cette simulation vous permet d'entendre les types de sons les plus couramment rapportés par les personnes qui en souffrent — <strong>à faible volume</strong>.</p>
+
+    <div class="warn-box" style="margin-bottom:0">
+      ⚠ <strong>Avertissement :</strong> cette simulation peut être inconfortable. Utilisez un volume modéré. Ne l'activez pas si vous souffrez déjà d'acouphènes ou d'hyperacousie.
+    </div>
+
+    <div class="acouphene-box" style="margin-top:1.5rem">
+      <h3>🔊 Simulateur d'acouphènes</h3>
+      <p style="margin-top:.5rem">Ces sons correspondent aux formes les plus fréquentes d'acouphènes. Chaque personne les perçoit différemment — en intensité, en fréquence et en caractère.</p>
+
+      <div class="acouphene-visual">
+        <canvas class="acouphene-wave-canvas" id="acouphene-canvas"></canvas>
+      </div>
+
+      <div class="acouphene-types">
+        <button class="acouphene-btn" onclick="playAcouphene('sifflement', this)">Sifflement aigu<br><small style="opacity:.6">~4 000 Hz</small></button>
+        <button class="acouphene-btn" onclick="playAcouphene('bourdon', this)">Bourdonnement<br><small style="opacity:.6">~120 Hz</small></button>
+        <button class="acouphene-btn" onclick="playAcouphene('stridulation', this)">Stridulation<br><small style="opacity:.6">~8 000 Hz</small></button>
+        <button class="acouphene-btn" onclick="playAcouphene('pulsatile', this)">Pulsatile<br><small style="opacity:.6">Rythmique</small></button>
+        <button class="acouphene-btn" onclick="playAcouphene('bruit_blanc', this)">Bruit de fond<br><small style="opacity:.6">Bruit blanc</small></button>
+      </div>
+
+      <button class="stop-acouphene" onclick="stopAcouphene()">■ Arrêter</button>
+
+      <div style="margin-top:1.5rem; font-size:0.72rem; color:rgba(244,240,232,0.5); line-height:1.8; max-width:560px">
+        Pour les personnes souffrant d'acouphènes chroniques, ce type de son est présent en permanence — souvent plus audible dans le silence de la nuit, rendant l'endormissement difficile. L'intensité perçue est souvent faible en valeur absolue (20–40 dB) mais sa persistance et son caractère involontaire le rendent éprouvant.
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>Musée de l'Audition &nbsp;·&nbsp; Chapitre 08 — Les Risques auditifs</p>
+  <p style="margin-top:.5rem"><a href="index.html" style="color:var(--gold);text-decoration:none">← Retour au sommaire</a></p>
+</footer>
+
+<script>
+// ══════════════════════════════════════════════
+// JAUGE DÉCIBELS
+// ══════════════════════════════════════════════
+const DB_LEVELS = [
+  { max:10,  color:'#27ae60', source:'Silence, respiration', risk:'Aucun risque. C\'est le seuil d\'audibilité humain.', time:'' },
+  { max:20,  color:'#27ae60', source:'Feuilles dans le vent', risk:'Aucun risque. Son extrêmement doux.', time:'' },
+  { max:30,  color:'#2ecc71', source:'Murmure, bibliothèque calme', risk:'Aucun risque. Environnement calme idéal.', time:'' },
+  { max:40,  color:'#2ecc71', source:'Appartement calme, bruit de fond', risk:'Aucun risque.', time:'' },
+  { max:50,  color:'#f1c40f', source:'Pluie modérée, bureau tranquille', risk:'Aucun risque. Niveau confortable pour travailler.', time:'' },
+  { max:60,  color:'#f1c40f', source:'Conversation normale', risk:'Aucun risque. Niveau de référence de la vie quotidienne.', time:'' },
+  { max:70,  color:'#e67e22', source:'Aspirateur, circulation modérée', risk:'Aucun risque sur une journée normale.', time:'' },
+  { max:80,  color:'#e67e22', source:'Sonnerie de téléphone, restaurant animé', risk:'Exposition prolongée à surveiller mais généralement sans danger.', time:'' },
+  { max:85,  color:'#e74c3c', source:'⚠ Seuil de danger — trafic dense', risk:'Seuil réglementaire d\'exposition professionnelle (8h/jour). Au-delà, des lésions cochléaires peuvent apparaître.', time:'Durée sans risque : 8 heures maximum' },
+  { max:90,  color:'#c0392b', source:'Tondeuse à gazon, métro', risk:'Les cellules ciliées subissent des contraintes mécaniques importantes. Des lésions irréversibles sont possibles.', time:'Durée sans risque : 2h30 maximum' },
+  { max:100, color:'#c0392b', source:'Discothèque, moto, tronçonneuse', risk:'Exposition dangereuse. Risque réel de perte auditive en cas d\'exposition répétée.', time:'Durée sans risque : 40 minutes maximum' },
+  { max:110, color:'#922b21', source:'Concert de rock (fosse), klaxon de train', risk:'Très dangereux. Des lésions peuvent survenir en moins de 30 minutes.', time:'Durée sans risque : 5–10 minutes maximum' },
+  { max:120, color:'#7b241c', source:'🔴 Seuil de douleur — avion au décollage', risk:'Douleur immédiate. Le tympan et les osselets peuvent être endommagés mécaniquement.', time:'Risque immédiat — tout contact doit être évité' },
+  { max:130, color:'#641e16', source:'Détonation d\'arme à feu (proche)', risk:'Danger extrême. Une seule exposition peut provoquer une surdité brutale et irréversible.', time:'⛔ Danger immédiat' },
+  { max:140, color:'#4a0f0f', source:'Réacteur d\'avion à proximité', risk:'Destruction mécanique possible des structures de l\'oreille moyenne et interne.', time:'⛔ Danger extrême — irréversible' },
+];
+
+function getDbInfo(val) {
+  for (const lvl of DB_LEVELS) { if (val <= lvl.max) return lvl; }
+  return DB_LEVELS[DB_LEVELS.length - 1];
+}
+
+const slider   = document.getElementById('db-slider');
+const dbVal    = document.getElementById('db-val');
+const dbSource = document.getElementById('db-source');
+const dbFill   = document.getElementById('db-fill');
+const dbRisk   = document.getElementById('db-risk');
+const dbTime   = document.getElementById('db-time');
+const dbSliderVal = document.getElementById('db-slider-val');
+
+function updateMeter(val) {
+  const info = getDbInfo(val);
+  const pct  = (val / 140) * 100;
+  dbVal.textContent    = val + ' dB';
+  dbSliderVal.textContent = val + ' dB';
+  dbSource.textContent = info.source;
+  dbRisk.textContent   = info.risk;
+  dbTime.textContent   = info.time;
+  dbFill.style.width   = pct + '%';
+  dbFill.style.background = `linear-gradient(to right, #27ae60, ${info.color})`;
+}
+
+slider.addEventListener('input', function() { updateMeter(+this.value); });
+updateMeter(60);
+
+// ══════════════════════════════════════════════
+// CONSÉQUENCES ACCORDÉON
+// ══════════════════════════════════════════════
+function toggleConsequence(el) {
+  const detail = el.querySelector('.consequence-detail');
+  const isOpen = detail.classList.contains('open');
+  document.querySelectorAll('.consequence-detail').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.consequence-item').forEach(i => i.classList.remove('open'));
+  if (!isOpen) { detail.classList.add('open'); el.classList.add('open'); }
+}
+
+// ══════════════════════════════════════════════
+// SIMULATEUR D'ACOUPHÈNES
+// ══════════════════════════════════════════════
+let acouCtx = null, acouNodes = [], acouRaf = null;
+let activeAcouBtn = null;
+
+const acouCanvas = document.getElementById('acouphene-canvas');
+const acouCtx2d  = acouCanvas.getContext('2d');
+let acouPhase    = 0;
+let acouFreqViz  = 4000;
+let acouTypeViz  = 'sine';
+
+function drawAcouWave() {
+  const W = acouCanvas.width  = acouCanvas.offsetWidth;
+  const H = acouCanvas.height = acouCanvas.offsetHeight;
+  acouCtx2d.clearRect(0, 0, W, H);
+  acouCtx2d.strokeStyle = 'rgba(231,76,60,0.7)';
+  acouCtx2d.lineWidth   = 1.5;
+  acouCtx2d.beginPath();
+  const cycles = Math.max(3, Math.min(40, acouFreqViz / 200));
+  for (let px = 0; px <= W; px++) {
+    const t  = (px / W) * cycles * 2 * Math.PI + acouPhase;
+    let y;
+    if (acouTypeViz === 'noise') {
+      y = (Math.random() - 0.5) * 0.8;
+    } else if (acouTypeViz === 'pulse') {
+      const beat = Math.sin(t * 0.08);
+      y = Math.sin(t) * Math.max(0, beat);
+    } else {
+      y = Math.sin(t) * 0.7;
+    }
+    const py = H/2 - y * (H/2 - 6);
+    if (px === 0) acouCtx2d.moveTo(px, py); else acouCtx2d.lineTo(px, py);
+  }
+  acouCtx2d.stroke();
+  acouPhase += 0.08;
+  acouRaf = requestAnimationFrame(drawAcouWave);
+}
+
+function playAcouphene(type, btn) {
+  stopAcouphene();
+  acouCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const masterGain = acouCtx.createGain();
+  masterGain.gain.setValueAtTime(0.07, acouCtx.currentTime);
+  masterGain.connect(acouCtx.destination);
+  acouNodes = [masterGain];
+
+  switch(type) {
+    case 'sifflement': {
+      const o = acouCtx.createOscillator();
+      o.type = 'sine'; o.frequency.setValueAtTime(4000, acouCtx.currentTime);
+      o.connect(masterGain); o.start();
+      acouNodes.push(o);
+      acouFreqViz = 4000; acouTypeViz = 'sine';
+      break;
+    }
+    case 'bourdon': {
+      // Bourdonnement grave avec légère modulation
+      const o = acouCtx.createOscillator();
+      o.type = 'sawtooth'; o.frequency.setValueAtTime(120, acouCtx.currentTime);
+      const lfo = acouCtx.createOscillator();
+      lfo.frequency.setValueAtTime(3, acouCtx.currentTime);
+      const lfoGain = acouCtx.createGain();
+      lfoGain.gain.setValueAtTime(8, acouCtx.currentTime);
+      lfo.connect(lfoGain); lfoGain.connect(o.frequency);
+      lfo.start(); o.connect(masterGain); o.start();
+      acouNodes.push(o, lfo, lfoGain);
+      acouFreqViz = 120; acouTypeViz = 'sine';
+      break;
+    }
+    case 'stridulation': {
+      const o = acouCtx.createOscillator();
+      o.type = 'sine'; o.frequency.setValueAtTime(8000, acouCtx.currentTime);
+      // Légère modulation rapide type stridulation d'insecte
+      const lfo = acouCtx.createOscillator();
+      lfo.frequency.setValueAtTime(18, acouCtx.currentTime);
+      const lfoG = acouCtx.createGain();
+      lfoG.gain.setValueAtTime(0.04, acouCtx.currentTime);
+      lfo.connect(lfoG); lfoG.connect(masterGain.gain);
+      lfo.start(); o.connect(masterGain); o.start();
+      acouNodes.push(o, lfo, lfoG);
+      acouFreqViz = 8000; acouTypeViz = 'sine';
+      break;
+    }
+    case 'pulsatile': {
+      const o = acouCtx.createOscillator();
+      o.type = 'sine'; o.frequency.setValueAtTime(800, acouCtx.currentTime);
+      const ampMod = acouCtx.createOscillator();
+      ampMod.frequency.setValueAtTime(1.2, acouCtx.currentTime); // ~72 bpm
+      const ampGain = acouCtx.createGain();
+      ampGain.gain.setValueAtTime(0.5, acouCtx.currentTime);
+      const addGain = acouCtx.createGain();
+      addGain.gain.setValueAtTime(0.5, acouCtx.currentTime);
+      ampMod.connect(ampGain); ampGain.connect(addGain.gain);
+      o.connect(addGain); addGain.connect(masterGain);
+      ampMod.start(); o.start();
+      acouNodes.push(o, ampMod, ampGain, addGain);
+      acouFreqViz = 800; acouTypeViz = 'pulse';
+      break;
+    }
+    case 'bruit_blanc': {
+      // Bruit blanc via ScriptProcessor ou bufferSource
+      const bufferSize = acouCtx.sampleRate * 2;
+      const buffer = acouCtx.createBuffer(1, bufferSize, acouCtx.sampleRate);
+      const data   = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2) - 1;
+      const src = acouCtx.createBufferSource();
+      src.buffer = buffer; src.loop = true;
+      src.connect(masterGain); src.start();
+      acouNodes.push(src);
+      acouFreqViz = 2000; acouTypeViz = 'noise';
+      break;
+    }
+  }
+
+  if (activeAcouBtn) activeAcouBtn.classList.remove('playing');
+  btn.classList.add('playing');
+  activeAcouBtn = btn;
+  drawAcouWave();
+}
+
+function stopAcouphene() {
+  cancelAnimationFrame(acouRaf);
+  acouNodes.forEach(n => { try { n.stop?.(); } catch(e){} try { n.disconnect?.(); } catch(e){} });
+  acouNodes = [];
+  if (acouCtx) { try { acouCtx.close(); } catch(e){} acouCtx = null; }
+  if (activeAcouBtn) { activeAcouBtn.classList.remove('playing'); activeAcouBtn = null; }
+  if (acouCtx2d && acouCanvas) acouCtx2d.clearRect(0, 0, acouCanvas.width, acouCanvas.height);
+}
+</script>
+</body>
+</html>

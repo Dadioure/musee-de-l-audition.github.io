@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>05 · Intensité & Niveau Sonore — Musée de l'Audition</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@200;300;400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #f4f0e8; --warm-white: #faf8f4; --ink: #1a1410;
+      --brown: #5c3d2e; --gold: #b8960c; --gold-light: #d4b44a;
+      --muted: #8a7968; --line: #d8d0c0;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Josefin Sans', sans-serif; background: var(--warm-white); color: var(--ink); overflow-x: hidden; }
+
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(26,20,16,0.97); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(184,150,12,0.2); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 3.5rem; }
+    .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-style: italic; color: var(--gold-light); letter-spacing: 0.05em; text-decoration: none; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--gold-light); }
+
+    .page-header { background: var(--ink); padding: 5rem 2rem 4rem; position: relative; overflow: hidden; }
+    .page-header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 80% at 80% 50%, rgba(92,61,46,0.3) 0%, transparent 60%); }
+    .page-num { font-family: 'Cormorant Garamond', serif; font-size: 8rem; font-weight: 300; color: rgba(184,150,12,0.12); line-height: 1; position: absolute; right: 2rem; bottom: -1rem; }
+    .page-header-content { max-width: 700px; position: relative; }
+    .chapter-label { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.5rem; }
+    .page-header h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 300; color: var(--cream); line-height: 1.1; }
+    .page-header h1 em { font-style: italic; color: var(--gold-light); }
+    .page-intro { margin-top: 1.5rem; font-size: 0.8rem; letter-spacing: 0.06em; color: var(--muted); line-height: 1.8; max-width: 560px; }
+
+    .section-nav { background: var(--cream); border-bottom: 1px solid var(--line); padding: 0 2rem; display: flex; overflow-x: auto; }
+    .section-nav a { padding: 1rem 1.5rem; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); text-decoration: none; white-space: nowrap; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s; }
+    .section-nav a:hover { color: var(--ink); border-color: var(--gold); }
+
+    main { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+    section.chapter { padding: 5rem 0; border-bottom: 1px solid var(--line); }
+    section.chapter:last-child { border-bottom: none; }
+    .section-label { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 2.5rem; display: flex; align-items: center; gap: 1rem; }
+    .section-label::after { content:''; flex:1; height:1px; background:var(--line); }
+    h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 300; line-height: 1.2; margin-bottom: 1.5rem; }
+    h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 400; margin-bottom: 1rem; color: var(--brown); }
+    p { font-size: 0.82rem; line-height: 1.85; color: #3d3028; max-width: 680px; letter-spacing: 0.03em; margin-bottom: 1rem; }
+    .gold-rule { width:3rem; height:1px; background:var(--gold); margin: 2rem 0; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; margin: 2rem 0; }
+    @media(max-width:700px){ .two-col { grid-template-columns: 1fr; } }
+    .note-box { background: var(--cream); border-left: 3px solid var(--gold); padding: 1.2rem 1.8rem; margin: 2rem 0; font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-style: italic; color: var(--brown); line-height: 1.6; max-width: 700px; }
+
+    /* ── ÉCHELLE dB VERTICALE ── */
+    .db-scale-wrap { position: relative; margin: 2rem 0; display: flex; gap: 2rem; align-items: stretch; flex-wrap: wrap; }
+    .db-scale-bar { display: flex; flex-direction: column; width: 60px; flex-shrink: 0; }
+    .db-scale-segment { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-family: 'Josefin Sans', sans-serif; color: white; font-weight: 400; letter-spacing: 0.05em; cursor: pointer; transition: filter 0.2s; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .db-scale-segment:hover { filter: brightness(1.2); }
+    .db-scale-labels { display: flex; flex-direction: column; justify-content: space-between; padding: 0; min-width: 120px; flex: 1; }
+    .db-scale-label { font-size: 0.7rem; color: #3d3028; line-height: 1.5; padding: 0.5rem 0; border-bottom: 1px solid var(--line); display: flex; gap: 0.75rem; align-items: center; }
+    .db-scale-label strong { font-family: 'Cormorant Garamond', serif; font-size: 1rem; color: var(--ink); min-width: 50px; }
+    .db-info-box { margin-top: 1rem; padding: 1rem 1.5rem; background: var(--cream); border-left: 3px solid var(--gold); display: none; font-size: 0.78rem; line-height: 1.75; color: #3d3028; max-width: 100%; }
+    .db-info-box.visible { display: block; }
+
+    /* ── COMPARATEUR ── */
+    .comparateur { background: var(--ink); border-radius: 2px; padding: 2.5rem; margin: 2rem 0; }
+    .comparateur h3 { color: var(--gold-light); margin-bottom: 0.5rem; }
+    .comparateur p { color: rgba(244,240,232,0.6); font-size: 0.78rem; max-width: 560px; }
+    .comp-row { display: flex; gap: 2rem; margin-top: 2rem; flex-wrap: wrap; }
+    .comp-col { flex: 1; min-width: 200px; }
+    .comp-label { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; display: flex; justify-content: space-between; }
+    .comp-label span { color: var(--gold-light); }
+    input[type=range] { -webkit-appearance: none; width: 100%; height: 3px; background: rgba(255,255,255,0.15); border-radius: 2px; outline: none; }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--gold); cursor: pointer; }
+    .comp-bars { display: flex; gap: 1rem; align-items: flex-end; margin-top: 1.5rem; height: 120px; }
+    .comp-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; height: 100%; justify-content: flex-end; }
+    .comp-bar { width: 100%; border-radius: 1px 1px 0 0; transition: height 0.3s ease, background 0.3s; }
+    .comp-bar-lbl { font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); text-align: center; }
+    .comp-result { margin-top: 1.5rem; font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; color: var(--gold-light); min-height: 2rem; }
+
+    /* ── QUIZ ── */
+    .quiz-wrap { margin: 2rem 0; }
+    .quiz-question { background: var(--cream); border: 1.5px solid var(--line); padding: 1.5rem 2rem; margin-bottom: 1px; }
+    .quiz-q-text { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; color: var(--ink); margin-bottom: 1rem; }
+    .quiz-options { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+    .quiz-opt { padding: 0.5rem 1.2rem; font-size: 0.68rem; letter-spacing: 0.1em; border: 1.5px solid var(--line); background: var(--warm-white); cursor: pointer; transition: all 0.2s; }
+    .quiz-opt:hover { border-color: var(--gold); }
+    .quiz-opt.correct { background: #e8f5e9; border-color: #27ae60; color: #1a5c2a; }
+    .quiz-opt.wrong   { background: #fdf0ee; border-color: #c0392b; color: #5a1010; }
+    .quiz-feedback { font-size: 0.75rem; margin-top: 0.75rem; min-height: 1.2rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── TABLE ── */
+    .db-table { width: 100%; border-collapse: collapse; margin: 2rem 0; font-size: 0.75rem; }
+    .db-table th { background: var(--ink); color: var(--gold-light); font-weight: 300; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.75rem 1rem; text-align: left; font-size: 0.65rem; }
+    .db-table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--line); color: #3d3028; }
+    .db-table tr:hover td { background: var(--cream); }
+
+    footer { border-top: 1px solid var(--line); padding: 3rem 2rem; text-align: center; color: var(--muted); font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; margin-top: 4rem; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+    .chapter { animation: fadeUp 0.6s ease both; }
+    @media(max-width:600px){ .nav-links{display:none} }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html#sommaire">← Musée de l'Audition</a>
+  <ul class="nav-links">
+    <li><a href="#intensite">Intensité</a></li>
+    <li><a href="#decibel">Décibel</a></li>
+    <li><a href="#comparateur">Comparateur</a></li>
+    <li><a href="#quiz">Quiz</a></li>
+  </ul>
+</nav>
+
+<header class="page-header">
+  <div class="page-header-content">
+    <div class="chapter-label">Chapitre 05 · Exposition permanente</div>
+    <h1>Intensité &amp;<br><em>Niveau sonore</em></h1>
+    <p class="page-intro">De la chute d'une feuille au réacteur d'avion, l'oreille humaine couvre une gamme de puissance sonore vertigineuse. Comment mesurer cette étendue ? Pourquoi le décibel est-il indispensable ?</p>
+  </div>
+  <div class="page-num">05</div>
+</header>
+
+<div class="section-nav">
+  <a href="#intensite">I. Intensité sonore</a>
+  <a href="#decibel">II. L'échelle des dB</a>
+  <a href="#comparateur">III. Comparateur</a>
+  <a href="#quiz">IV. Quiz</a>
+</div>
+
+<main>
+
+  <!-- ══ I. INTENSITÉ ══ -->
+  <section class="chapter" id="intensite">
+    <div class="section-label">I · L'intensité sonore</div>
+    <h2>Mesurer la puissance d'un son</h2>
+    <div class="two-col">
+      <div>
+        <p>L'<strong>intensité sonore</strong> mesure la puissance transportée par une onde sonore par unité de surface. Elle s'exprime en <strong>Watts par mètre carré (W/m²)</strong>. Le seuil d'audibilité humaine, soit le son le plus faible perceptible par une oreille jeune et saine, est fixé à :</p>
+        <p style="font-family:'Cormorant Garamond',serif; font-size:1.4rem; color:var(--brown); text-align:center; padding:1rem; background:var(--cream); border-left:3px solid var(--gold); margin:1rem 0">I₀ = 10⁻¹² W/m²</p>
+        <p>À l'autre extrémité, le seuil de douleur (environ 120 dB) correspond à une intensité de <strong>1 W/m²</strong> — soit un trillion de fois plus grande. Impossible d'utiliser une échelle linéaire pour représenter cela : il faudrait une règle de 1 000 milliards de graduations !</p>
+      </div>
+      <div>
+        <h3>Pourquoi une échelle logarithmique ?</h3>
+        <p>Notre perception auditive est elle-même <strong>logarithmique</strong> : pour qu'un son paraisse deux fois plus fort, il faut multiplier son intensité par 10, pas par 2. Le cerveau comprime naturellement l'information sonore.</p>
+        <p>C'est pourquoi les physiciens et ingénieurs utilisent le <strong>décibel</strong>, une unité logarithmique qui reflète fidèlement notre perception et comprime la plage gigantesque des intensités en une échelle de 0 à ~140.</p>
+        <p>La formule est : <strong>L (dB) = 10 × log₁₀(I / I₀)</strong></p>
+      </div>
+    </div>
+
+    <table class="db-table">
+      <thead><tr><th>Intensité (W/m²)</th><th>Niveau (dB)</th><th>Source sonore</th><th>Perception</th></tr></thead>
+      <tbody>
+        <tr><td>10⁻¹²</td><td>0 dB</td><td>Seuil d'audibilité</td><td>Inaudible pour la plupart</td></tr>
+        <tr><td>10⁻¹⁰</td><td>20 dB</td><td>Feuilles dans le vent</td><td>Très faible</td></tr>
+        <tr><td>10⁻⁸</td><td>40 dB</td><td>Bibliothèque calme</td><td>Faible</td></tr>
+        <tr><td>10⁻⁶</td><td>60 dB</td><td>Conversation</td><td>Moyen</td></tr>
+        <tr><td>10⁻⁴</td><td>80 dB</td><td>Aspirateur</td><td>Fort</td></tr>
+        <tr><td>10⁻²</td><td>100 dB</td><td>Discothèque</td><td>Très fort</td></tr>
+        <tr><td>1</td><td>120 dB</td><td>Seuil de douleur</td><td>Douloureux</td></tr>
+        <tr><td>10²</td><td>140 dB</td><td>Réacteur d'avion</td><td>Destructeur</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ══ II. ÉCHELLE dB INTERACTIVE ══ -->
+  <section class="chapter" id="decibel">
+    <div class="section-label">II · L'échelle des décibels</div>
+    <h2>Cliquez sur un niveau pour en savoir plus</h2>
+    <p>Cette échelle verticale représente les niveaux sonores du quotidien. Chaque segment est cliquable.</p>
+    <div class="gold-rule"></div>
+
+    <div class="db-scale-wrap">
+      <div class="db-scale-bar" id="db-scale-bar"></div>
+      <div class="db-scale-labels" id="db-scale-labels"></div>
+    </div>
+    <div class="db-info-box" id="db-info-box"></div>
+  </section>
+
+  <!-- ══ III. COMPARATEUR ══ -->
+  <section class="chapter" id="comparateur">
+    <div class="section-label">III · Comparateur de niveaux sonores</div>
+    <h2>Combien de fois plus fort ?</h2>
+    <p>Ajustez deux niveaux sonores et découvrez la différence réelle d'intensité entre eux — le résultat est souvent surprenant !</p>
+    <div class="gold-rule"></div>
+
+    <div class="comparateur">
+      <h3>⚖️ Comparateur d'intensité</h3>
+      <p style="margin-top:.4rem">Faites glisser les deux curseurs pour comparer deux niveaux sonores.</p>
+
+      <div class="comp-row">
+        <div class="comp-col">
+          <div class="comp-label">Son A <span id="lbl-a">60 dB</span></div>
+          <input type="range" id="sl-a" min="0" max="140" value="60" oninput="updateComp()"/>
+          <div style="font-size:.65rem;color:var(--muted);margin-top:.3rem" id="src-a">Conversation</div>
+        </div>
+        <div class="comp-col">
+          <div class="comp-label">Son B <span id="lbl-b">90 dB</span></div>
+          <input type="range" id="sl-b" min="0" max="140" value="90" oninput="updateComp()"/>
+          <div style="font-size:.65rem;color:var(--muted);margin-top:.3rem" id="src-b">Tondeuse à gazon</div>
+        </div>
+      </div>
+
+      <div class="comp-bars">
+        <div class="comp-bar-wrap">
+          <div class="comp-bar" id="bar-a" style="height:40%;background:var(--gold)"></div>
+          <div class="comp-bar-lbl">Son A</div>
+        </div>
+        <div class="comp-bar-wrap">
+          <div class="comp-bar" id="bar-b" style="height:64%;background:#c0392b"></div>
+          <div class="comp-bar-lbl">Son B</div>
+        </div>
+      </div>
+
+      <div class="comp-result" id="comp-result"></div>
+    </div>
+  </section>
+
+  <!-- ══ IV. QUIZ ══ -->
+  <section class="chapter" id="quiz">
+    <div class="section-label">IV · Quiz — testez vos connaissances</div>
+    <h2>Connaissez-vous l'échelle des décibels ?</h2>
+    <div class="gold-rule"></div>
+
+    <div class="quiz-wrap" id="quiz-wrap"></div>
+    <button onclick="resetQuiz()" style="margin-top:1.5rem;padding:.75rem 2rem;font-family:'Josefin Sans',sans-serif;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;background:var(--gold);color:var(--ink);border:none;cursor:pointer;">Recommencer</button>
+  </section>
+
+</main>
+
+<footer>
+  <p>Musée de l'Audition &nbsp;·&nbsp; Chapitre 05 — Intensité & Niveau sonore</p>
+  <p style="margin-top:.5rem"><a href="index.html" style="color:var(--gold);text-decoration:none">← Retour au sommaire</a></p>
+</footer>
+
+<script>
+// ══ DONNÉES SOURCES ══
+const SOURCES = [
+  {db:0,   label:'0 dB',   name:'Seuil d\'audibilité',    desc:'Le son le plus faible qu\'une oreille jeune et saine peut percevoir dans le silence absolu. Correspond à une intensité de 10⁻¹² W/m².'},
+  {db:10,  label:'10 dB',  name:'Respiration calme',       desc:'Quasi-inaudible. Correspond au bruit de fond d\'une chambre anéchoïque (chambre sourde).'},
+  {db:20,  label:'20 dB',  name:'Feuilles dans le vent',   desc:'Très léger bruissement. Environnement considéré comme silencieux.'},
+  {db:30,  label:'30 dB',  name:'Murmure',                 desc:'Conversation murmurée à 1 mètre. Niveau nocturne recommandé par l\'OMS pour les chambres.'},
+  {db:40,  label:'40 dB',  name:'Bibliothèque calme',      desc:'Bruit de fond d\'un appartement calme ou d\'une bibliothèque. Niveau de travail intellectuel idéal.'},
+  {db:50,  label:'50 dB',  name:'Pluie modérée',           desc:'Bruit de pluie, réfrigérateur, ventilateur de bureau. Légèrement perceptible mais non gênant.'},
+  {db:60,  label:'60 dB',  name:'Conversation normale',    desc:'Niveau de référence de la vie quotidienne. Une conversation normale à 1 mètre.'},
+  {db:70,  label:'70 dB',  name:'Aspirateur, télévision',  desc:'Environnement animé. Commence à perturber la concentration sur des tâches complexes.'},
+  {db:80,  label:'80 dB',  name:'Circulation dense',       desc:'Trafic routier, restaurant animé. Exposition prolongée à surveiller.'},
+  {db:85,  label:'85 dB ⚠',name:'Seuil de danger',        desc:'Limite réglementaire d\'exposition professionnelle (8h/jour). Au-delà, des lésions cochléaires peuvent apparaître progressivement.'},
+  {db:90,  label:'90 dB',  name:'Tondeuse, métro',         desc:'Durée d\'exposition sans risque : 2h30 par jour maximum. Protection auditive conseillée.'},
+  {db:100, label:'100 dB', name:'Discothèque, moto',       desc:'Durée sans risque : 40 minutes. Dommages possibles en moins d\'une heure.'},
+  {db:110, label:'110 dB', name:'Concert de rock',         desc:'Durée sans risque : 5 à 10 minutes. Acouphènes temporaires fréquents.'},
+  {db:120, label:'120 dB 🔴',name:'Seuil de douleur',     desc:'Douleur immédiate. Klaxon de train à 1 mètre, avion au décollage à proximité. Risque de lésion instantanée.'},
+  {db:140, label:'140 dB', name:'Réacteur d\'avion',       desc:'Destruction mécanique possible des structures de l\'oreille. Exposition même brève catastrophique.'},
+];
+
+function dbToColor(db) {
+  if (db <= 40)  return '#27ae60';
+  if (db <= 70)  return '#f1c40f';
+  if (db <= 84)  return '#e67e22';
+  if (db <= 99)  return '#e74c3c';
+  if (db <= 119) return '#c0392b';
+  return '#7b241c';
+}
+
+function dbToSource(db) {
+  let best = SOURCES[0];
+  for (const s of SOURCES) { if (Math.abs(s.db - db) < Math.abs(best.db - db)) best = s; }
+  return best;
+}
+
+// ── Échelle verticale ──
+const bar    = document.getElementById('db-scale-bar');
+const labels = document.getElementById('db-scale-labels');
+const infoBox= document.getElementById('db-info-box');
+
+SOURCES.slice().reverse().forEach(s => {
+  const seg = document.createElement('div');
+  seg.className = 'db-scale-segment';
+  seg.style.background = dbToColor(s.db);
+  seg.style.minHeight = '36px';
+  seg.textContent = s.label;
+  seg.addEventListener('click', () => {
+    infoBox.innerHTML = `<strong>${s.name}</strong> — ${s.db} dB<br>${s.desc}`;
+    infoBox.classList.add('visible');
+  });
+  bar.appendChild(seg);
+
+  const lbl = document.createElement('div');
+  lbl.className = 'db-scale-label';
+  lbl.innerHTML = `<strong>${s.db} dB</strong> ${s.name}`;
+  labels.appendChild(lbl);
+});
+
+// ── Comparateur ──
+function updateComp() {
+  const a = +document.getElementById('sl-a').value;
+  const b = +document.getElementById('sl-b').value;
+  document.getElementById('lbl-a').textContent = a + ' dB';
+  document.getElementById('lbl-b').textContent = b + ' dB';
+  document.getElementById('src-a').textContent = dbToSource(a).name;
+  document.getElementById('src-b').textContent = dbToSource(b).name;
+
+  const pctA = (a/140)*100, pctB = (b/140)*100;
+  document.getElementById('bar-a').style.height = Math.max(4, pctA) + '%';
+  document.getElementById('bar-b').style.height = Math.max(4, pctB) + '%';
+  document.getElementById('bar-a').style.background = dbToColor(a);
+  document.getElementById('bar-b').style.background = dbToColor(b);
+
+  const diff = Math.abs(b - a);
+  const ratio = Math.pow(10, diff/10);
+  let msg = '';
+  if (diff === 0) {
+    msg = 'Les deux sons ont la même intensité.';
+  } else {
+    const bigger = b > a ? 'B' : 'A';
+    const times = ratio >= 10 ? ratio.toFixed(0) : ratio.toFixed(1);
+    msg = `Le son ${bigger} est <strong>${times} fois plus intense</strong> que l'autre (+${diff} dB).`;
+    if (diff >= 10) msg += ` Chaque +10 dB = ×10 en intensité.`;
+  }
+  document.getElementById('comp-result').innerHTML = msg;
+}
+updateComp();
+
+// ── Quiz ──
+const QUESTIONS = [
+  { q: 'Quel niveau sonore correspond à une conversation normale ?', opts: ['20 dB','40 dB','60 dB','100 dB'], correct: 2, expl: 'Une conversation normale à 1 mètre produit environ 60 dB — c\'est le niveau de référence de la vie quotidienne.' },
+  { q: 'À partir de combien de dB le son devient-il dangereux pour l\'oreille ?', opts: ['60 dB','75 dB','85 dB','100 dB'], correct: 2, expl: '85 dB est le seuil réglementaire d\'exposition professionnelle sur 8h. Au-delà, les cellules ciliées commencent à être endommagées.' },
+  { q: 'Si un son augmente de 10 dB, son intensité (en W/m²) est multipliée par…', opts: ['2','5','10','100'], correct: 2, expl: 'L\'échelle des décibels est logarithmique : +10 dB = intensité × 10. C\'est pour ça qu\'un son à 80 dB est 10 fois plus intense qu\'à 70 dB.' },
+  { q: 'Quelle est la formule du niveau sonore en décibels ?', opts: ['L = I / I₀','L = 10 × log(I/I₀)','L = I × 10','L = log(I) × I₀'], correct: 1, expl: 'La formule est L(dB) = 10 × log₁₀(I/I₀), où I₀ = 10⁻¹² W/m² est le seuil d\'audibilité de référence.' },
+  { q: 'Quel est le seuil de douleur approximatif ?', opts: ['85 dB','100 dB','110 dB','120 dB'], correct: 3, expl: 'À 120 dB, la sensation de douleur est immédiate. Le tympan et les osselets peuvent être endommagés mécaniquement.' },
+];
+
+function buildQuiz() {
+  const wrap = document.getElementById('quiz-wrap');
+  wrap.innerHTML = '';
+  QUESTIONS.forEach((q, qi) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question';
+    div.innerHTML = `<div class="quiz-q-text">${qi+1}. ${q.q}</div>
+      <div class="quiz-options">${q.opts.map((o,i) => `<button class="quiz-opt" onclick="answerQuiz(this,${qi},${i})">${o}</button>`).join('')}</div>
+      <div class="quiz-feedback" id="qfb-${qi}"></div>`;
+    wrap.appendChild(div);
+  });
+}
+
+function answerQuiz(btn, qi, chosen) {
+  const q = QUESTIONS[qi];
+  const block = btn.closest('.quiz-question');
+  block.querySelectorAll('.quiz-opt').forEach(b => b.disabled = true);
+  if (chosen === q.correct) {
+    btn.classList.add('correct');
+    document.getElementById('qfb-'+qi).innerHTML = '✅ ' + q.expl;
+  } else {
+    btn.classList.add('wrong');
+    block.querySelectorAll('.quiz-opt')[q.correct].classList.add('correct');
+    document.getElementById('qfb-'+qi).innerHTML = '❌ ' + q.expl;
+  }
+}
+
+function resetQuiz() { buildQuiz(); }
+buildQuiz();
+</script>
+</body>
+</html>

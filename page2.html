@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>02 · Caractéristiques d'un son — Musée de l'Audition</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@200;300;400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #f4f0e8; --warm-white: #faf8f4; --ink: #1a1410;
+      --brown: #5c3d2e; --gold: #b8960c; --gold-light: #d4b44a;
+      --muted: #8a7968; --line: #d8d0c0;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Josefin Sans', sans-serif; background: var(--warm-white); color: var(--ink); overflow-x: hidden; }
+
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(26,20,16,0.97); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(184,150,12,0.2); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 3.5rem; }
+    .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-style: italic; color: var(--gold-light); letter-spacing: 0.05em; text-decoration: none; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--gold-light); }
+
+    .page-header { background: var(--ink); padding: 5rem 2rem 4rem; position: relative; overflow: hidden; }
+    .page-header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 80% at 80% 50%, rgba(92,61,46,0.3) 0%, transparent 60%); }
+    .page-num { font-family: 'Cormorant Garamond', serif; font-size: 8rem; font-weight: 300; color: rgba(184,150,12,0.12); line-height: 1; position: absolute; right: 2rem; bottom: -1rem; }
+    .page-header-content { max-width: 700px; position: relative; }
+    .chapter-label { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.5rem; }
+    .page-header h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 300; color: var(--cream); line-height: 1.1; }
+    .page-header h1 em { font-style: italic; color: var(--gold-light); }
+    .page-intro { margin-top: 1.5rem; font-size: 0.8rem; letter-spacing: 0.06em; color: var(--muted); line-height: 1.8; max-width: 560px; }
+
+    .section-nav { background: var(--cream); border-bottom: 1px solid var(--line); padding: 0 2rem; display: flex; overflow-x: auto; }
+    .section-nav a { padding: 1rem 1.5rem; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); text-decoration: none; white-space: nowrap; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s; }
+    .section-nav a:hover { color: var(--ink); border-color: var(--gold); }
+
+    main { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+    section.chapter { padding: 5rem 0; border-bottom: 1px solid var(--line); }
+    section.chapter:last-child { border-bottom: none; }
+    .section-label { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 2.5rem; display: flex; align-items: center; gap: 1rem; }
+    .section-label::after { content:''; flex:1; height:1px; background:var(--line); }
+    h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 300; line-height: 1.2; margin-bottom: 1.5rem; }
+    h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 400; margin-bottom: 1rem; color: var(--brown); }
+    p { font-size: 0.82rem; line-height: 1.85; color: #3d3028; max-width: 680px; letter-spacing: 0.03em; margin-bottom: 1rem; }
+    .gold-rule { width:3rem; height:1px; background:var(--gold); margin: 2rem 0; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; margin: 2rem 0; }
+    @media(max-width:700px){ .two-col { grid-template-columns: 1fr; } }
+    .note-box { background: var(--cream); border-left: 3px solid var(--gold); padding: 1.2rem 1.8rem; margin: 2rem 0; font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-style: italic; color: var(--brown); line-height: 1.6; max-width: 700px; }
+
+    /* ── CANVAS OSCILLOSCOPE ── */
+    .oscillo-wrap {
+      background: #0a0e1a;
+      border: 1.5px solid var(--line);
+      border-radius: 2px;
+      padding: 1.5rem;
+      margin: 2rem 0;
+    }
+    .oscillo-wrap canvas {
+      width: 100%;
+      height: 180px;
+      display: block;
+    }
+    .oscillo-label {
+      font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(255,255,255,0.25); margin-top: 0.75rem; text-align: center;
+    }
+
+    /* ── SLIDERS ── */
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    @media(max-width:600px){ .controls { grid-template-columns: 1fr; } }
+
+    .ctrl-group { display: flex; flex-direction: column; gap: 0.5rem; }
+    .ctrl-label {
+      font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--muted); display: flex; justify-content: space-between;
+    }
+    .ctrl-label span { color: var(--gold-light); font-weight: 400; }
+    input[type=range] {
+      -webkit-appearance: none; width: 100%; height: 3px;
+      background: var(--line); border-radius: 2px; outline: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 16px; height: 16px;
+      border-radius: 50%; background: var(--gold); cursor: pointer;
+      transition: background 0.2s;
+    }
+    input[type=range]::-webkit-slider-thumb:hover { background: var(--gold-light); }
+
+    /* ── DEMO BOUTONS ── */
+    .demo-btns { display: flex; gap: 0.75rem; flex-wrap: wrap; margin: 1rem 0; }
+    .demo-btn {
+      padding: 0.5rem 1.2rem; font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+      border: 1.5px solid var(--line); background: var(--warm-white);
+      color: var(--muted); cursor: pointer; transition: all 0.2s; border-radius: 1px;
+    }
+    .demo-btn:hover, .demo-btn.active { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+
+    /* ── VISUALISATION AMPLITUDE ── */
+    .amplitude-visual {
+      display: flex; align-items: center; gap: 1.5rem;
+      margin: 1.5rem 0; flex-wrap: wrap;
+    }
+    .amp-bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; }
+    .amp-bar {
+      width: 40px; border-radius: 1px;
+      background: linear-gradient(to top, var(--gold), var(--gold-light));
+      transition: height 0.3s ease;
+    }
+    .amp-bar-label { font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+
+    /* ── TABLEAU FRÉQUENCES ── */
+    .freq-table { width: 100%; border-collapse: collapse; margin: 2rem 0; font-size: 0.75rem; }
+    .freq-table th { background: var(--ink); color: var(--gold-light); font-weight: 300; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.75rem 1rem; text-align: left; font-size: 0.65rem; }
+    .freq-table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--line); color: #3d3028; }
+    .freq-table tr:hover td { background: var(--cream); }
+
+    /* ── HAUTEUR DEMO ── */
+    .pitch-demo {
+      display: flex; gap: 1rem; align-items: flex-end;
+      margin: 1.5rem 0; flex-wrap: wrap;
+    }
+    .pitch-note {
+      display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+      cursor: pointer;
+    }
+    .pitch-bar {
+      width: 36px; border-radius: 1px 1px 0 0;
+      background: linear-gradient(to top, var(--brown), var(--gold-light));
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .pitch-bar:hover { opacity: 0.8; transform: scaleY(1.03); }
+    .pitch-bar.playing { box-shadow: 0 0 12px rgba(184,150,12,0.5); }
+    .pitch-note-label { font-size: 0.6rem; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; }
+    .pitch-hz { font-size: 0.55rem; color: var(--gold); }
+
+    footer { border-top: 1px solid var(--line); padding: 3rem 2rem; text-align: center; color: var(--muted); font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; margin-top: 4rem; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+    .chapter { animation: fadeUp 0.6s ease both; }
+    @media(max-width:600px){ .nav-links{display:none} }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html#sommaire">← Musée de l'Audition</a>
+  <ul class="nav-links">
+    <li><a href="#frequence">Fréquence</a></li>
+    <li><a href="#amplitude">Amplitude</a></li>
+    <li><a href="#oscilloscope">Oscilloscope</a></li>
+    <li><a href="#timbre">Timbre</a></li>
+  </ul>
+</nav>
+
+<header class="page-header">
+  <div class="page-header-content">
+    <div class="chapter-label">Chapitre 02 · Exposition permanente</div>
+    <h1>Caractéristiques<br><em>d'un son</em></h1>
+    <p class="page-intro">Fréquence, amplitude, timbre : les trois paramètres qui définissent entièrement un son. Explorez-les de façon interactive grâce aux outils ci-dessous.</p>
+  </div>
+  <div class="page-num">02</div>
+</header>
+
+<div class="section-nav">
+  <a href="#frequence">I. Fréquence & hauteur</a>
+  <a href="#amplitude">II. Amplitude & intensité</a>
+  <a href="#oscilloscope">III. Oscilloscope interactif</a>
+  <a href="#timbre">IV. Timbre & type et forme d'onde</a>
+</div>
+
+<main>
+
+  <!-- ══ I. FRÉQUENCE ══ -->
+  <section class="chapter" id="frequence">
+    <div class="section-label">I · Fréquence & hauteur</div>
+    <h2>La fréquence : ce qui rend un son aigu ou grave</h2>
+
+    <div class="two-col">
+      <div>
+        <p>La <strong>fréquence</strong> d'un son est le nombre de cycles de vibration par seconde. Elle s'exprime en <strong>Hertz (Hz)</strong>. Plus un objet vibre vite, plus la fréquence est élevée et plus le son est <em>aigu</em>. Moins il vibre vite, plus le son est <em>grave</em>.</p>
+        <p>La fréquence détermine ce que les musiciens appellent la <strong>hauteur</strong> d'un son : le do, le ré, le mi… correspondent chacun à une fréquence précise. Le La de référence, par exemple, est fixé à 440 Hz.</p>
+        <p>L'oreille humaine perçoit, en théorie, les sons compris entre <strong>20 Hz et 20 000 Hz</strong>. Cette plage se réduit avec l'âge, principalement par la perte des hautes fréquences.</p>
+      </div>
+      <div>
+        <!-- SVG onde haute fréquence vs basse fréquence -->
+        <svg viewBox="0 0 340 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;border:1.5px solid var(--line);background:#0a0e1a;display:block;">
+          <!-- Axe -->
+          <line x1="10" y1="80" x2="330" y2="80" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+          <!-- Son grave — basse fréquence, grande longueur d'onde -->
+          <path d="M10,80 C35,20 65,20 90,80 C115,140 145,140 170,80 C195,20 225,20 250,80 C275,140 305,140 330,80"
+            fill="none" stroke="#d4b44a" stroke-width="2" opacity="0.9"/>
+          <text x="12" y="18" fill="#d4b44a" font-size="9" font-family="sans-serif" opacity="0.8">Son grave — basse fréquence</text>
+          <!-- Son aigu — haute fréquence -->
+          <path d="M10,80 C19,55 28,55 37,80 C46,105 55,105 64,80 C73,55 82,55 91,80 C100,105 109,105 118,80 C127,55 136,55 145,80 C154,105 163,105 172,80 C181,55 190,55 199,80 C208,105 217,105 226,80 C235,55 244,55 253,80 C262,105 271,105 280,80 C289,55 298,55 307,80 C316,105 325,105 330,80"
+            fill="none" stroke="#b8960c" stroke-width="1.5" opacity="0.6"/>
+          <text x="12" y="152" fill="#b8960c" font-size="9" font-family="sans-serif" opacity="0.7">Son aigu — haute fréquence</text>
+        </svg>
+        <p style="font-size:.65rem;color:var(--muted);letter-spacing:.1em;text-align:center;margin-top:.5rem;text-transform:uppercase">Comparaison basse / haute fréquence</p>
+      </div>
+    </div>
+
+    <div class="gold-rule"></div>
+    <h3>Jouez une note — cliquez sur les barres</h3>
+    <p style="font-size:.75rem;color:var(--muted)">Chaque barre représente une note de la gamme de Do majeur. Sa hauteur illustre la fréquence. Cliquez pour entendre le son correspondant.</p>
+
+    <div class="pitch-demo" id="pitch-demo">
+      <!-- Généré par JS -->
+    </div>
+
+    <table class="freq-table">
+      <thead><tr><th>Note</th><th>Fréquence (Hz)</th><th>Perception</th></tr></thead>
+      <tbody>
+        <tr><td>Do (C3)</td><td>130 Hz</td><td>Très grave — voix de basse</td></tr>
+        <tr><td>La (A3)</td><td>220 Hz</td><td>Grave — violoncelle, baryton</td></tr>
+        <tr><td>La (A4) — référence</td><td>440 Hz</td><td>Médium — référence internationale</td></tr>
+        <tr><td>La (A5)</td><td>880 Hz</td><td>Aigu — violon, flûte</td></tr>
+        <tr><td>Do (C7)</td><td>2 093 Hz</td><td>Très aigu — sifflet, piccolo</td></tr>
+        <tr><td>Limite haute humaine</td><td>20 000 Hz</td><td>Inaudible pour un adulte de plus de 25 ans</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ══ II. AMPLITUDE ══ -->
+  <section class="chapter" id="amplitude">
+    <div class="section-label">II · Amplitude & intensité</div>
+    <h2>L'amplitude : ce qui rend un son fort ou faible</h2>
+
+    <div class="two-col">
+      <div>
+        <p>L'<strong>amplitude</strong> est la différence entre la pression maximale et la pression de base. Plus l'amplitude est grande, plus le son est <strong>intense</strong> (fort).</p>
+        <p>L'intensité sonore se mesure en <strong>Watts par mètre carré (W/m²)</strong> mais, pour des raisons pratiques (l'oreille humaine couvre une gamme de 1 à 10 000 000 000 000 !), on utilise une échelle logarithmique : le <strong>décibel (dB)</strong>.</p>
+        <p>Deux ondes peuvent avoir la même fréquence (même hauteur) mais des amplitudes différentes — elles produiront le même son, mais l'une sera plus forte que l'autre.</p>
+      </div>
+      <div>
+        <!-- SVG amplitude faible vs forte -->
+        <svg viewBox="0 0 340 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;border:1.5px solid var(--line);background:#0a0e1a;display:block;">
+          <line x1="10" y1="80" x2="330" y2="80" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+          <!-- Faible amplitude -->
+          <path d="M10,80 C35,65 65,65 90,80 C115,95 145,95 170,80 C195,65 225,65 250,80 C275,95 305,95 330,80"
+            fill="none" stroke="#8a7968" stroke-width="1.5" opacity="0.8" stroke-dasharray="4,2"/>
+          <text x="12" y="62" fill="#8a7968" font-size="9" font-family="sans-serif" opacity="0.8">Faible amplitude → son doux</text>
+          <!-- Grande amplitude -->
+          <path d="M10,80 C35,10 65,10 90,80 C115,150 145,150 170,80 C195,10 225,10 250,80 C275,150 305,150 330,80"
+            fill="none" stroke="#d4b44a" stroke-width="2.5" opacity="0.9"/>
+          <text x="12" y="148" fill="#d4b44a" font-size="9" font-family="sans-serif" opacity="0.9">Grande amplitude → son fort</text>
+        </svg>
+        <p style="font-size:.65rem;color:var(--muted);letter-spacing:.1em;text-align:center;margin-top:.5rem;text-transform:uppercase">Même fréquence, amplitudes différentes</p>
+      </div>
+    </div>
+
+    <div class="gold-rule"></div>
+    <h3>Visualisation de l'amplitude</h3>
+    <p style="font-size:.75rem;color:var(--muted)">Ces barres représentent l'amplitude de différentes sources sonores courantes.</p>
+
+    <div class="amplitude-visual" id="amp-visual">
+      <!-- Généré par JS -->
+    </div>
+
+    <div class="note-box">À chaque fois que l'intensité sonore double, le niveau en décibels augmente d'environ 3 dB. À 85 dB, une exposition prolongée (plus de 8h) commence à endommager les cellules ciliées de façon irréversible.</div>
+  </section>
+
+  <!-- ══ III. OSCILLOSCOPE INTERACTIF ══ -->
+  <section class="chapter" id="oscilloscope">
+    <div class="section-label">III · Oscilloscope interactif</div>
+    <h2>Dessinez votre onde sonore</h2>
+    <p>Un oscilloscope affiche le type d'onde sonore en temps réel. Jouez sur les curseurs ci-dessous pour voir et entendre simultanément l'effet de chaque paramètre.</p>
+    <div class="gold-rule"></div>
+
+    <!-- Canvas oscilloscope -->
+    <div class="oscillo-wrap">
+      <canvas id="oscillo" width="900" height="180"></canvas>
+      <div class="oscillo-label">Oscilloscope — forme de l'onde en temps réel</div>
+    </div>
+
+    <!-- Contrôles -->
+    <div class="controls">
+      <div class="ctrl-group">
+        <div class="ctrl-label">Fréquence <span id="lbl-freq">440 Hz</span></div>
+        <input type="range" id="sl-freq" min="80" max="2000" value="440" step="1"/>
+      </div>
+      <div class="ctrl-group">
+        <div class="ctrl-label">Amplitude (volume) <span id="lbl-amp">50 %</span></div>
+        <input type="range" id="sl-amp" min="0" max="100" value="50" step="1"/>
+      </div>
+    </div>
+
+    <!-- Boutons forme d'onde -->
+    <div style="margin-bottom:.5rem;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)">Forme d'onde</div>
+    <div class="demo-btns" id="wave-btns">
+      <button class="demo-btn active" data-wave="sine">Sinusoïdale</button>
+      <button class="demo-btn" data-wave="square">Carrée</button>
+      <button class="demo-btn" data-wave="sawtooth">En dents de scie</button>
+      <button class="demo-btn" data-wave="triangle">Triangulaire</button>
+    </div>
+
+    <div class="demo-btns" style="margin-top:.5rem">
+      <button class="demo-btn" id="btn-play" onclick="toggleSound()">▶ Écouter</button>
+      <button class="demo-btn" onclick="stopSound()">■ Stop</button>
+    </div>
+
+    <p style="font-size:.7rem;color:var(--muted);margin-top:1rem">⚠ Utilisez un casque ou baissez le volume avant d'activer l'écoute — certaines fréquences peuvent être désagréables à fort volume.</p>
+  </section>
+
+  <!-- ══ IV. TIMBRE ══ -->
+  <section class="chapter" id="timbre">
+    <div class="section-label">IV · Timbre</div>
+    <h2>Le timbre : la « couleur » du son</h2>
+    <div class="two-col">
+      <div>
+        <p>Deux instruments jouant le même La à 440 Hz produisent pourtant des sons clairement distincts. Ce qui les différencie, c'est le <strong>timbre</strong> — la qualité ou la couleur du son.</p>
+        <p>Le timbre dépend de la <strong>forme de l'onde</strong> : un son réel n'est jamais une sinusoïde pure, mais un mélange de la fréquence fondamentale et de ses <strong>harmoniques</strong> (multiples entiers de la fréquence de base), dont les intensités relatives forment la « signature » de chaque instrument.</p>
+        <p>Un violon, une flûte et une guitare jouant le même Do ont la même hauteur (même fréquence fondamentale) et peuvent avoir la même intensité, mais leurs spectres harmoniques sont totalement différents — d'où leur son distinctif.</p>
+      </div>
+      <div>
+        <!-- SVG comparaison formes d'onde -->
+        <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;border:1.5px solid var(--line);background:#0a0e1a;display:block;">
+          <!-- Sinusoïdale -->
+          <text x="10" y="18" fill="#d4b44a" font-size="8" font-family="sans-serif">Sinusoïdale (son pur)</text>
+          <line x1="10" y1="35" x2="310" y2="35" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+          <path d="M10,35 C32,15 52,15 74,35 C96,55 116,55 138,35 C160,15 180,15 202,35 C224,55 244,55 266,35 C288,15 308,15 310,35"
+            fill="none" stroke="#d4b44a" stroke-width="1.5"/>
+          <!-- Carrée -->
+          <text x="10" y="80" fill="#b8960c" font-size="8" font-family="sans-serif">Carrée (clarinette)</text>
+          <line x1="10" y1="95" x2="310" y2="95" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+          <path d="M10,85 L10,85 L10,105 L84,105 L84,85 L158,85 L158,105 L232,105 L232,85 L310,85"
+            fill="none" stroke="#b8960c" stroke-width="1.5"/>
+          <!-- Dents de scie -->
+          <text x="10" y="138" fill="#8a7968" font-size="8" font-family="sans-serif">Dents de scie (violon, cuivres)</text>
+          <line x1="10" y1="155" x2="310" y2="155" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+          <path d="M10,145 L84,165 L84,145 L158,165 L158,145 L232,165 L232,145 L310,165"
+            fill="none" stroke="#8a7968" stroke-width="1.5"/>
+          <!-- Triangulaire -->
+          <text x="10" y="182" fill="#5c3d2e" font-size="8" font-family="sans-serif">Triangulaire (flûte douce)</text>
+          <path d="M10,195 L50,175 L90,195 L130,175 L170,195 L210,175 L250,195 L290,175 L310,195"
+            fill="none" stroke="#7a5a40" stroke-width="1.5"/>
+        </svg>
+        <p style="font-size:.65rem;color:var(--muted);letter-spacing:.1em;text-align:center;margin-top:.5rem;text-transform:uppercase">Quatre formes d'onde — quatre timbres différents</p>
+      </div>
+    </div>
+
+    <div class="note-box">Le timbre est ce qui nous permet de reconnaître la voix d'une personne au téléphone, ou de distinguer un piano d'un orgue même lorsqu'ils jouent exactement la même note.</div>
+  </section>
+
+</main>
+
+<footer>
+  <p>Musée de l'Audition &nbsp;·&nbsp; Chapitre 02 — Caractéristiques d'un son</p>
+  <p style="margin-top:.5rem"><a href="index.html" style="color:var(--gold);text-decoration:none">← Retour au sommaire</a></p>
+</footer>
+
+<script>
+// ══════════════════════════════════════════════
+// OSCILLOSCOPE
+// ══════════════════════════════════════════════
+const canvas  = document.getElementById('oscillo');
+const ctx2d   = canvas.getContext('2d');
+let waveType  = 'sine';
+let freq      = 440;
+let amp       = 0.5;
+let phase     = 0;
+let rafId     = null;
+
+function drawWave() {
+  const W = canvas.width, H = canvas.height;
+  ctx2d.clearRect(0, 0, W, H);
+
+  // Fond grille
+  ctx2d.strokeStyle = 'rgba(255,255,255,0.04)';
+  ctx2d.lineWidth = 1;
+  for (let x = 0; x <= W; x += W/8) { ctx2d.beginPath(); ctx2d.moveTo(x,0); ctx2d.lineTo(x,H); ctx2d.stroke(); }
+  for (let y = 0; y <= H; y += H/4) { ctx2d.beginPath(); ctx2d.moveTo(0,y); ctx2d.lineTo(W,y); ctx2d.stroke(); }
+
+  // Axe central
+  ctx2d.strokeStyle = 'rgba(255,255,255,0.12)';
+  ctx2d.lineWidth = 1;
+  ctx2d.beginPath(); ctx2d.moveTo(0, H/2); ctx2d.lineTo(W, H/2); ctx2d.stroke();
+
+  // Onde
+  const cycles = Math.max(2, Math.min(12, freq / 80));
+  const gradient = ctx2d.createLinearGradient(0, 0, W, 0);
+  gradient.addColorStop(0,   'rgba(184,150,12,0.4)');
+  gradient.addColorStop(0.5, 'rgba(212,180,74,1)');
+  gradient.addColorStop(1,   'rgba(184,150,12,0.4)');
+  ctx2d.strokeStyle = gradient;
+  ctx2d.lineWidth   = 2.5;
+  ctx2d.beginPath();
+
+  for (let px = 0; px <= W; px++) {
+    const t = (px / W) * cycles * 2 * Math.PI + phase;
+    let y;
+    switch(waveType) {
+      case 'sine':
+        y = Math.sin(t); break;
+      case 'square':
+        y = Math.sign(Math.sin(t)); break;
+      case 'sawtooth':
+        y = ((t % (2*Math.PI)) / Math.PI) - 1; break;
+      case 'triangle':
+        y = (2/Math.PI) * Math.asin(Math.sin(t)); break;
+      default: y = Math.sin(t);
+    }
+    const py = H/2 - y * (H/2 - 16) * amp;
+    if (px === 0) ctx2d.moveTo(px, py); else ctx2d.lineTo(px, py);
+  }
+  ctx2d.stroke();
+
+  // Étiquettes
+  ctx2d.fillStyle = 'rgba(212,180,74,0.6)';
+  ctx2d.font = '10px Josefin Sans, sans-serif';
+  ctx2d.fillText(freq + ' Hz', 8, 14);
+
+  phase += 0.06;
+  rafId = requestAnimationFrame(drawWave);
+}
+
+// Démarrer l'animation
+drawWave();
+
+// Sliders
+document.getElementById('sl-freq').addEventListener('input', function() {
+  freq = +this.value;
+  document.getElementById('lbl-freq').textContent = freq + ' Hz';
+  if (osc) osc.frequency.setValueAtTime(freq, audioCtx2.currentTime);
+});
+document.getElementById('sl-amp').addEventListener('input', function() {
+  amp = this.value / 100;
+  document.getElementById('lbl-amp').textContent = this.value + ' %';
+  if (gainOsc) gainOsc.gain.setValueAtTime(amp * 0.3, audioCtx2.currentTime);
+});
+
+// Boutons forme d'onde
+document.querySelectorAll('[data-wave]').forEach(btn => {
+  btn.addEventListener('click', function() {
+    waveType = this.dataset.wave;
+    document.querySelectorAll('[data-wave]').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    if (osc) osc.type = waveType;
+  });
+});
+
+// ── Son oscilloscope ──
+let audioCtx2 = null, osc = null, gainOsc = null, playing = false;
+
+function toggleSound() {
+  if (playing) { stopSound(); return; }
+  audioCtx2 = new (window.AudioContext || window.webkitAudioContext)();
+  gainOsc   = audioCtx2.createGain();
+  gainOsc.gain.setValueAtTime(amp * 0.3, audioCtx2.currentTime);
+  osc       = audioCtx2.createOscillator();
+  osc.type  = waveType;
+  osc.frequency.setValueAtTime(freq, audioCtx2.currentTime);
+  osc.connect(gainOsc); gainOsc.connect(audioCtx2.destination);
+  osc.start();
+  playing = true;
+  document.getElementById('btn-play').textContent = '⏸ Pause';
+  document.getElementById('btn-play').classList.add('active');
+}
+
+function stopSound() {
+  if (osc) { try { osc.stop(); } catch(e){} }
+  if (audioCtx2) { try { audioCtx2.close(); } catch(e){} }
+  osc = null; gainOsc = null; playing = false;
+  document.getElementById('btn-play').textContent = '▶ Écouter';
+  document.getElementById('btn-play').classList.remove('active');
+}
+
+// ══════════════════════════════════════════════
+// BARRES DE NOTES (fréquence / hauteur)
+// ══════════════════════════════════════════════
+const NOTES = [
+  { label:'Do', hz: 262, height: 40 },
+  { label:'Ré', hz: 294, height: 50 },
+  { label:'Mi', hz: 330, height: 60 },
+  { label:'Fa', hz: 349, height: 70 },
+  { label:'Sol', hz: 392, height: 82 },
+  { label:'La', hz: 440, height: 94 },
+  { label:'Si', hz: 494, height: 108 },
+  { label:'Do\'', hz: 523, height: 120 },
+];
+
+const pitchDemo = document.getElementById('pitch-demo');
+NOTES.forEach(n => {
+  const div = document.createElement('div');
+  div.className = 'pitch-note';
+  div.innerHTML = `
+    <div class="pitch-bar" style="height:${n.height}px" id="bar-${n.label}"></div>
+    <div class="pitch-note-label">${n.label}</div>
+    <div class="pitch-hz">${n.hz} Hz</div>
+  `;
+  div.addEventListener('click', () => playNote(n.hz, div.querySelector('.pitch-bar')));
+  pitchDemo.appendChild(div);
+});
+
+let noteCtx = null;
+function playNote(hz, barEl) {
+  if (noteCtx) { try { noteCtx.close(); } catch(e){} }
+  noteCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const g = noteCtx.createGain();
+  g.gain.setValueAtTime(0.25, noteCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, noteCtx.currentTime + 1.2);
+  const o = noteCtx.createOscillator();
+  o.type = 'sine'; o.frequency.setValueAtTime(hz, noteCtx.currentTime);
+  o.connect(g); g.connect(noteCtx.destination); o.start();
+  o.stop(noteCtx.currentTime + 1.2);
+  barEl.classList.add('playing');
+  setTimeout(() => barEl.classList.remove('playing'), 1200);
+}
+
+// ══════════════════════════════════════════════
+// VISUALISATION AMPLITUDE
+// ══════════════════════════════════════════════
+const AMP_SOURCES = [
+  { label:'Feuilles', db: 10,  height: 16 },
+  { label:'Murmure',  db: 30,  height: 28 },
+  { label:'Convers.', db: 60,  height: 55 },
+  { label:'Voiture',  db: 75,  height: 75 },
+  { label:'Moto',     db: 90,  height: 95 },
+  { label:'Concert',  db: 110, height: 120 },
+  { label:'Avion',    db: 130, height: 150 },
+];
+
+const ampVis = document.getElementById('amp-visual');
+AMP_SOURCES.forEach(s => {
+  const div = document.createElement('div');
+  div.className = 'amp-bar-wrap';
+  div.innerHTML = `
+    <div class="amp-bar" style="height:${s.height}px"></div>
+    <div class="amp-bar-label">${s.label}</div>
+    <div class="pitch-hz">${s.db} dB</div>
+  `;
+  ampVis.appendChild(div);
+});
+</script>
+</body>
+</html>

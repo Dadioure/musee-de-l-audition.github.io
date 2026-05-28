@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>06 · Structure de l'oreille — Musée de l'Audition</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@200;300;400&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #f4f0e8; --warm-white: #faf8f4; --ink: #1a1410;
+      --brown: #5c3d2e; --gold: #b8960c; --gold-light: #d4b44a;
+      --muted: #8a7968; --line: #d8d0c0;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Josefin Sans', sans-serif; background: var(--warm-white); color: var(--ink); overflow-x: hidden; }
+
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(26,20,16,0.97); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(184,150,12,0.2); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 3.5rem; }
+    .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-style: italic; color: var(--gold-light); letter-spacing: 0.05em; text-decoration: none; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--gold-light); }
+
+    .page-header { background: var(--ink); padding: 5rem 2rem 4rem; position: relative; overflow: hidden; }
+    .page-header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 80% at 80% 50%, rgba(92,61,46,0.3) 0%, transparent 60%); }
+    .page-num { font-family: 'Cormorant Garamond', serif; font-size: 8rem; font-weight: 300; color: rgba(184,150,12,0.12); line-height: 1; position: absolute; right: 2rem; bottom: -1rem; }
+    .page-header-content { max-width: 700px; position: relative; }
+    .chapter-label { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.5rem; }
+    .page-header h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 300; color: var(--cream); line-height: 1.1; }
+    .page-header h1 em { font-style: italic; color: var(--gold-light); }
+    .page-intro { margin-top: 1.5rem; font-size: 0.8rem; letter-spacing: 0.06em; color: var(--muted); line-height: 1.8; max-width: 560px; }
+
+    .section-nav { background: var(--cream); border-bottom: 1px solid var(--line); padding: 0 2rem; display: flex; overflow-x: auto; }
+    .section-nav a { padding: 1rem 1.5rem; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); text-decoration: none; white-space: nowrap; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s; }
+    .section-nav a:hover { color: var(--ink); border-color: var(--gold); }
+
+    main { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+    section.chapter { padding: 5rem 0; border-bottom: 1px solid var(--line); }
+    section.chapter:last-child { border-bottom: none; }
+    .section-label { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 2.5rem; display: flex; align-items: center; gap: 1rem; }
+    .section-label::after { content:''; flex:1; height:1px; background:var(--line); }
+    h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 300; line-height: 1.2; margin-bottom: 1.5rem; }
+    h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 400; margin-bottom: 1rem; color: var(--brown); }
+    p { font-size: 0.82rem; line-height: 1.85; color: #3d3028; max-width: 680px; letter-spacing: 0.03em; margin-bottom: 1rem; }
+    .gold-rule { width:3rem; height:1px; background:var(--gold); margin: 2rem 0; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; margin: 2rem 0; }
+    @media(max-width:700px){ .two-col { grid-template-columns: 1fr; } }
+    .note-box { background: var(--cream); border-left: 3px solid var(--gold); padding: 1.2rem 1.8rem; margin: 2rem 0; font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-style: italic; color: var(--brown); line-height: 1.6; max-width: 700px; }
+    .img-caption { text-align: center; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-top: 0.5rem; margin-bottom: 1.5rem; }
+
+    /* ── VIEWER 3D ── */
+    .viewer-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #0d1117;
+      border: 1.5px solid var(--line);
+      border-radius: 2px;
+      overflow: hidden;
+      margin: 2rem 0;
+    }
+    #viewer-canvas {
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
+    }
+    .viewer-hint {
+      position: absolute;
+      bottom: 0.75rem; left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.6rem; letter-spacing: 0.15em;
+      text-transform: uppercase; color: rgba(255,255,255,0.35);
+      pointer-events: none; white-space: nowrap;
+    }
+    .viewer-loading {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 1rem; color: var(--muted);
+      font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+      background: #0d1117;
+      transition: opacity 0.5s;
+    }
+    .viewer-loading.hidden { opacity: 0; pointer-events: none; }
+    .loader-ring {
+      width: 36px; height: 36px;
+      border: 2px solid rgba(184,150,12,0.2);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .viewer-controls {
+      display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.75rem;
+    }
+    .viewer-btn {
+      padding: 0.5rem 1.2rem;
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase;
+      border: 1.5px solid var(--line); background: var(--warm-white);
+      color: var(--muted); cursor: pointer; transition: all 0.2s;
+    }
+    .viewer-btn:hover { border-color: var(--gold); color: var(--ink); background: var(--cream); }
+
+    /* ── CRÉDIT LICENCE ── */
+    .credit-box {
+      background: var(--cream);
+      border: 1.5px solid var(--line);
+      padding: 1rem 1.5rem;
+      margin-top: 1rem;
+      font-size: 0.65rem;
+      line-height: 1.7;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+    .credit-box a { color: var(--gold); text-decoration: none; }
+    .credit-box a:hover { text-decoration: underline; }
+    .credit-box strong { color: var(--ink); }
+
+    /* ── SCHÉMAS INTERACTIFS ── */
+    .diagram-section { margin: 2rem 0; }
+    .diagram-wrap { position: relative; display: block; margin: 0 auto; }
+    .diagram-wrap img { width: 100%; display: block; border: 1.5px solid var(--line); border-radius: 2px; }
+
+    .hs {
+      position: absolute; transform: translate(-50%, -50%);
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--gold); border: 2px solid white;
+      box-shadow: 0 0 0 2px rgba(184,150,12,0.4);
+      cursor: pointer; z-index: 10;
+      transition: background 0.2s, transform 0.2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hs::after { content:''; width:6px; height:6px; border-radius:50%; background:white; }
+    .hs:hover, .hs.active { background: var(--ink); transform: translate(-50%,-50%) scale(1.2); box-shadow: 0 0 0 3px rgba(184,150,12,0.5); }
+
+    .tooltip {
+      position: absolute; background: var(--ink); color: var(--cream);
+      padding: 0.6rem 1rem; font-size: 0.7rem; letter-spacing: 0.05em;
+      white-space: nowrap; border-left: 2px solid var(--gold);
+      pointer-events: none; z-index: 20; opacity: 0;
+      transition: opacity 0.15s; transform: translate(-50%, calc(-100% - 12px));
+    }
+    .tooltip.visible { opacity: 1; }
+
+    .info-panel { margin-top: 1rem; padding: 1.5rem 2rem; background: var(--cream); border-left: 3px solid var(--gold); display: none; max-width: 700px; margin-left: auto; margin-right: auto; }
+    .info-panel.visible { display: block; }
+    .info-panel-title { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; color: var(--brown); margin-bottom: 0.4rem; }
+    .info-panel-text { font-size: 0.78rem; line-height: 1.75; color: #3d3028; }
+
+    footer { border-top: 1px solid var(--line); padding: 3rem 2rem; text-align: center; color: var(--muted); font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; margin-top: 4rem; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+    .chapter { animation: fadeUp 0.6s ease both; }
+    @media(max-width:600px){ .nav-links{display:none} }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html#sommaire">← Musée de l'Audition</a>
+  <ul class="nav-links">
+    <li><a href="#externe">Oreille externe</a></li>
+    <li><a href="#moyenne">Oreille moyenne</a></li>
+    <li><a href="#interne">Oreille interne</a></li>
+    <li><a href="#modele3d">Modèle 3D</a></li>
+    <li><a href="#ensemble">Vue d'ensemble</a></li>
+  </ul>
+</nav>
+
+<header class="page-header">
+  <div class="page-header-content">
+    <div class="chapter-label">Chapitre 06 · Exposition permanente</div>
+    <h1>Structure de<br><em>l'oreille</em></h1>
+    <p class="page-intro">De l'auricule au nerf auditif : anatomie complète des trois compartiments de l'oreille humaine. Cliquez sur les points pour explorer chaque structure.</p>
+  </div>
+  <div class="page-num">06</div>
+</header>
+
+<div class="section-nav">
+  <a href="#externe">I. Oreille externe</a>
+  <a href="#moyenne">II. Osselets</a>
+  <a href="#interne">III. Cochlée</a>
+  <a href="#modele3d">IV. Modèle 3D</a>
+  <a href="#ensemble">V. Vue d'ensemble</a>
+</div>
+
+<main>
+
+  <!-- ══ I. OREILLE EXTERNE ══ -->
+  <section class="chapter" id="externe">
+    <div class="section-label">I · Oreille externe</div>
+    <h2>Le pavillon de l'oreille</h2>
+    <p>Le pavillon (ou auricule) est la partie visible de l'oreille. Son relief complexe, formé de cartilage élastique recouvert de peau, joue un rôle dans la localisation spatiale des sons. Cliquez sur les points pour identifier chaque région.</p>
+    <div class="gold-rule"></div>
+
+    <div class="diagram-section">
+      <!--
+      ╔═══════════════════════════════════════════════════════╗
+      ║  HOTSPOTS PAVILLON — POSITIONS À AJUSTER             ║
+      ║  Ouvre dans Chrome > Inspecter > modifie left/top    ║
+      ╚═══════════════════════════════════════════════════════╝
+      -->
+      <div class="diagram-wrap" id="wrap-pavillon" style="max-width:500px;">
+        <img src="images/pavillon.png" alt="Pavillon de l'oreille externe"/>
+        <div class="hs" style="left:35%; top:25%"  data-panel="pav" data-key="helix"      title="Hélix"></div>
+        <div class="hs" style="left:45%; top:30%" data-panel="pav" data-key="scapha"     title="Scapha"></div>
+        <div class="hs" style="left:60%; top:55%" data-panel="pav" data-key="fosse"      title="Fosse triangulaire"></div>
+        <div class="hs" style="left:45%; top:45%" data-panel="pav" data-key="antihelix"  title="Anti-hélix"></div>
+        <div class="hs" style="left:55%; top:47%" data-panel="pav" data-key="conque"     title="Conque"></div>
+        <div class="hs" style="left:67%; top:57%" data-panel="pav" data-key="tragus"     title="Tragus"></div>
+        <div class="hs" style="left:50%; top:60%" data-panel="pav" data-key="antitragus" title="Anti-tragus"></div>
+        <div class="hs" style="left:65%; top:75%" data-panel="pav" data-key="lobule"     title="Lobule"></div>
+        <div class="tooltip" id="tooltip-pav"></div>
+      </div>
+      <p class="img-caption">Pavillon de l'oreille — cliquez sur un point pour en savoir plus</p>
+      <div class="info-panel" id="panel-pav">
+        <div class="info-panel-title" id="panel-pav-title"></div>
+        <div class="info-panel-text"  id="panel-pav-text"></div>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-top:3rem">
+      <div>
+        <h3>Rôle du pavillon</h3>
+        <p>Le pavillon collecte et amplifie légèrement les ondes sonores, en les dirigeant vers le canal auditif externe. Sa forme asymétrique et ses replis cartilagineux filtrent différemment les sons selon leur provenance verticale, aidant le cerveau à localiser une source sonore au-dessus ou en dessous.</p>
+      </div>
+      <div>
+        <h3>Canal auditif externe</h3>
+        <p>Long d'environ 2,5 cm, il conduit les sons du pavillon jusqu'au tympan. Légèrement courbé, il est tapissé de peau contenant des glandes sébacées et cérumineuses. Le cérumen protège contre les corps étrangers et l'humidité, et possède des propriétés antibactériennes.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ II. OSSELETS ══ -->
+  <section class="chapter" id="moyenne">
+    <div class="section-label">II · Oreille moyenne</div>
+    <h2>Les osselets : la plus petite chaîne du corps</h2>
+    <p>L'oreille moyenne est une cavité remplie d'air logée dans l'os temporal. Elle contient la chaîne des trois osselets — les plus petits os du corps humain — qui transmettent et amplifient mécaniquement les vibrations du tympan vers l'oreille interne.</p>
+    <div class="gold-rule"></div>
+
+    <div class="diagram-section">
+      <!--
+      ╔═══════════════════════════════════════════════════════╗
+      ║  HOTSPOTS OSSELETS — POSITIONS À AJUSTER             ║
+      ║  1 = Marteau (malleus)  — zone gauche, corps rond    ║
+      ║  2 = Enclume (incus)    — zone centrale haute        ║
+      ║  3 = Étrier (stapes)    — zone droite, forme étrier  ║
+      ╚═══════════════════════════════════════════════════════╝
+      -->
+      <div class="diagram-wrap" id="wrap-osselets" style="max-width:550px;">
+        <img src="images/osselets.png" alt="Les trois osselets de l'oreille moyenne"/>
+        <div class="hs" style="left:28%; top:38%" data-panel="oss" data-key="marteau"       title="Marteau (malleus)"></div>
+        <div class="hs" style="left:45%; top:35%" data-panel="oss" data-key="enclume"       title="Enclume (incus)"></div>
+        <div class="hs" style="left:72%; top:52%" data-panel="oss" data-key="etrier"        title="Étrier (stapes)"></div>
+        <div class="hs" style="left:35%; top:62%" data-panel="oss" data-key="manche"        title="Manche du marteau"></div>
+        <div class="hs" style="left:63%; top:60%" data-panel="oss" data-key="articulation" title="Articulation incudo-stapédienne"></div>
+        <div class="tooltip" id="tooltip-oss"></div>
+      </div>
+      <p class="img-caption">Chaîne des osselets — marteau (1), enclume (2), étrier (3)</p>
+      <div class="info-panel" id="panel-oss">
+        <div class="info-panel-title" id="panel-oss-title"></div>
+        <div class="info-panel-text"  id="panel-oss-text"></div>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-top:3rem">
+      <div>
+        <h3>Transmission & amplification</h3>
+        <p>La chaîne ossiculaire fonctionne comme un système de leviers. Elle adapte l'impédance acoustique entre l'air et les fluides de la cochlée. Sans cette adaptation, plus de 99 % de l'énergie sonore serait perdue par réflexion.</p>
+      </div>
+      <div>
+        <h3>Trompe d'Eustache</h3>
+        <p>Ce conduit relie l'oreille moyenne au nasopharynx. Il s'ouvre lors de la déglutition ou du bâillement pour équilibrer la pression de part et d'autre du tympan. Un dysfonctionnement provoque la sensation d'oreilles bouchées ressentie en avion.</p>
+      </div>
+    </div>
+    <div class="note-box">Les osselets sont les seuls os du corps humain qui atteignent leur taille définitive dès la naissance — environ 3 mm pour l'étrier, le plus petit.</div>
+  </section>
+
+  <!-- ══ III. COCHLÉE ══ -->
+  <section class="chapter" id="interne">
+    <div class="section-label">III · Oreille interne</div>
+    <h2>La cochlée & l'organe de Corti</h2>
+    <p>Nichée dans la partie la plus dure de l'os temporal, l'oreille interne comprend la cochlée pour l'audition et le vestibule pour l'équilibre. La cochlée convertit les vibrations mécaniques en signaux électriques.</p>
+    <div class="gold-rule"></div>
+
+    <div class="diagram-section">
+      <!--
+      ╔═══════════════════════════════════════════════════════╗
+      ║  HOTSPOTS COCHLÉE — POSITIONS À AJUSTER             ║
+      ╚═══════════════════════════════════════════════════════╝
+      -->
+      <div class="diagram-wrap" id="wrap-cochlee" style="max-width:560px;">
+        <img src="images/cochlée.png" alt="Coupe transversale de la cochlée"/>
+        <div class="hs" style="left:50%; top:8%"  data-panel="coc" data-key="os"         title="Os (rocher)"></div>
+        <div class="hs" style="left:62%; top:21%" data-panel="coc" data-key="canalvest"  title="Canal vestibulaire"></div>
+        <div class="hs" style="left:67%; top:51%" data-panel="coc" data-key="endolymphe" title="Endolymphe"></div>
+        <div class="hs" style="left:23%; top:31%" data-panel="coc" data-key="strievasc"  title="Strie vasculaire"></div>
+        <div class="hs" style="left:17%; top:62%" data-panel="coc" data-key="ligspiral"  title="Ligament spiralé"></div>
+        <div class="hs" style="left:24%; top:74%" data-panel="coc" data-key="membbasil"  title="Membrane basilaire"></div>
+        <div class="hs" style="left:43%; top:80%" data-panel="coc" data-key="organcorti" title="Organe de Corti"></div>
+        <div class="hs" style="left:82%; top:36%" data-panel="coc" data-key="membtecto"  title="Membrane tectoriale"></div>
+        <div class="hs" style="left:75%; top:78%" data-panel="coc" data-key="canaltymp"  title="Canal tympanique"></div>
+        <div class="hs" style="left:86%; top:48%" data-panel="coc" data-key="limbe"      title="Limbe spiral"></div>
+        <div class="hs" style="left:87%; top:61%" data-panel="coc" data-key="nerfcoch"   title="Nerf cochléaire"></div>
+        <div class="hs" style="left:14%; top:45%" data-panel="coc" data-key="canalcoch"  title="Canal cochléaire"></div>
+        <div class="tooltip" id="tooltip-coc"></div>
+      </div>
+      <p class="img-caption">Coupe transversale de la cochlée — cliquez sur un point pour en savoir plus</p>
+      <div class="info-panel" id="panel-coc">
+        <div class="info-panel-title" id="panel-coc-title"></div>
+        <div class="info-panel-text"  id="panel-coc-text"></div>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-top:3rem">
+      <div>
+        <h3>Tonotopie</h3>
+        <p>La cochlée est organisée de façon tonotopique : chaque fréquence fait vibrer une zone précise de la membrane basilaire. Les sons aigus font vibrer la base ; les sons graves font vibrer l'apex.</p>
+      </div>
+      <div>
+        <h3>Cellules ciliées</h3>
+        <p>L'organe de Corti contient environ 3 500 cellules ciliées internes et 12 000 externes. Non régénérables, leur destruction par le bruit ou le vieillissement est définitive et se traduit par une surdité irréversible.</p>
+      </div>
+    </div>
+    <div class="note-box">Les cellules ciliées ne se régénèrent pas chez les mammifères. Leur perte est définitive — c'est pourquoi la prévention des traumatismes sonores est essentielle.</div>
+  </section>
+
+  <!-- ══ IV. MODÈLE 3D ══ -->
+  <section class="chapter" id="modele3d">
+    <div class="section-label">IV · Exploration 3D</div>
+    <h2>Anatomie de l'oreille interne en 3D</h2>
+    <p>Faites pivoter le modèle à la souris (clic gauche), zoomez avec la molette, et déplacez-le avec le clic droit. Prenez le temps d'explorer les structures de l'oreille interne sous tous les angles.</p>
+    <div class="gold-rule"></div>
+
+    <div class="viewer-wrap">
+      <canvas id="viewer-canvas"></canvas>
+      <div class="viewer-loading" id="viewer-loading">
+        <div class="loader-ring"></div>
+        Chargement du modèle 3D…
+      </div>
+      <div class="viewer-hint">Clic gauche : rotation · Molette : zoom · Clic droit : déplacer</div>
+    </div>
+
+    <div class="viewer-controls">
+      <button class="viewer-btn" onclick="resetCamera()">↺ Réinitialiser la vue</button>
+      <button class="viewer-btn" onclick="toggleWireframe()">⬡ Filaire</button>
+      <button class="viewer-btn" onclick="toggleRotation()">▶ Rotation auto</button>
+    </div>
+
+    <!-- CRÉDIT OBLIGATOIRE — CC-BY-NC-SA-4.0 -->
+    <div class="credit-box">
+      <strong>Crédit du modèle 3D :</strong> Ce modèle est basé sur
+      <a href="https://sketchfab.com/3d-models/anatomy-of-the-inner-ear-f80bda64666c4b8aaac8f63b7b82a0a0" target="_blank"
+         rel="noopener noreferrer">« Anatomy of the Inner Ear »</a>
+      par
+      <a href="https://sketchfab.com/tilt" target="_blank" rel="noopener noreferrer">University of Dundee School of Medicine</a>,
+      sous licence
+      <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">CC-BY-NC-SA-4.0</a>.
+      Utilisation non commerciale — toute version modifiée doit conserver la même licence.
+    </div>
+  </section>
+
+  <!-- ══ V. VUE D'ENSEMBLE ══ -->
+  <section class="chapter" id="ensemble">
+    <div class="section-label">V · Vue d'ensemble</div>
+    <h2>Du pavillon au nerf auditif</h2>
+    <p>Schéma complet du conduit auditif, de l'oreille externe à l'oreille interne. Cliquez sur les lettres pour retrouver les grandes zones.</p>
+    <div class="gold-rule"></div>
+
+    <div class="diagram-section">
+      <div class="diagram-wrap" id="wrap-ensemble" style="max-width:700px;">
+        <img src="images/conduit_auditif.jpeg" alt="Vue d'ensemble du conduit auditif"/>
+        <div class="hs" style="left:13%; top:4%" data-panel="ens" data-key="ext"    title="Oreille externe"></div>
+        <div class="hs" style="left:54%; top:62%" data-panel="ens" data-key="tympan" title="Tympan"></div>
+        <div class="hs" style="left:35%; top:4%" data-panel="ens" data-key="moy"    title="Oreille moyenne"></div>
+        <div class="hs" style="left:61%; top:58%" data-panel="ens" data-key="oss2"   title="Osselets"></div>
+        <div class="hs" style="left:67%; top:4%" data-panel="ens" data-key="int"    title="Oreille interne"></div>
+        <div class="hs" style="left:89%; top:37%" data-panel="ens" data-key="nerf"   title="Nerf auditif"></div>
+        <div class="hs" style="left:72%; top:58%" data-panel="ens" data-key="cochlée"   title="Cochlée"></div>
+        <div class="tooltip" id="tooltip-ens"></div>
+      </div>
+      <p class="img-caption">Coupe anatomique complète de l'oreille humaine</p>
+      <div class="info-panel" id="panel-ens">
+        <div class="info-panel-title" id="panel-ens-title"></div>
+        <div class="info-panel-text"  id="panel-ens-text"></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>Musée de l'Audition &nbsp;·&nbsp; Chapitre 06 — Structure de l'oreille</p>
+  <p style="margin-top:.5rem">
+    Modèle 3D :
+    <a href="https://sketchfab.com/3d-models/anatomy-of-the-inner-ear-f80bda64666c4b8aaac8f63b7b82a0a0"
+       target="_blank" rel="noopener noreferrer"
+       style="color:var(--gold);text-decoration:none">Anatomy of the Inner Ear</a>
+    — University of Dundee School of Medicine — CC-BY-NC-SA-4.0
+  </p>
+  <p style="margin-top:.5rem"><a href="index.html#sommaire" style="color:var(--gold);text-decoration:none">← Retour au sommaire</a></p>
+</footer>
+
+<!-- ════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════ -->
+<script>
+// ══════════════════════════════════════════════
+// DONNÉES HOTSPOTS (Corrigé : virgule ajoutée)
+// ══════════════════════════════════════════════
+const DATA = {
+  pav: {
+    helix:      { title:"Hélix", text:"Rebord cartilagineux qui forme le pourtour extérieur du pavillon. Il naît du conduit auditif et s'enroule jusqu'au lobule. Sa forme en spirale contribue à canaliser les ondes sonores vers la conque." },
+    scapha:     { title:"Scapha", text:"Dépression allongée (gouttière) située entre l'hélix et l'anti-hélix. Elle fait partie des structures cartilagineuses qui donnent au pavillon sa rigidité et sa forme caractéristique." },
+    fosse:      { title:"Fosse triangulaire", text:"Dépression triangulaire localisée dans la bifurcation supérieure de l'anti-hélix. Point de repère anatomique utilisé en auriculothérapie et pour certaines procédures chirurgicales." },
+    antihelix:  { title:"Anti-hélix", text:"Relief cartilagineux en Y situé en dedans de l'hélix. Ses deux branches supérieures délimitent la fosse triangulaire. Il forme la paroi interne de la scapha et contribue à la rigidité de l'oreille." },
+    conque:     { title:"Conque", text:"Cavité centrale et profonde du pavillon, directement en regard de l'entrée du canal auditif externe. C'est la zone du pavillon qui concentre le mieux les ondes sonores et les dirige vers le conduit." },
+    tragus:     { title:"Tragus", text:"Petite saillie cartilagineuse qui recouvre partiellement l'entrée du conduit auditif. Il protège mécaniquement l'entrée du canal et joue un rôle dans la localisation des sons provenant de l'avant." },
+    antitragus: { title:"Anti-tragus", text:"Éminence cartilagineuse opposée au tragus, séparée de lui par l'incisure inter-tragienne. Sa taille et sa forme varient selon les individus. Il complète la protection de l'entrée du conduit auditif." },
+    lobule:     { title:"Lobule", text:"Partie inférieure molle du pavillon, dépourvue de cartilage, constituée uniquement de tissu adipeux et de peau. C'est la seule partie de l'oreille externe non cartilagineuse." }
+  },
+  oss: {
+    marteau:      { title:"Marteau (malleus)", text:"Premier osselet de la chaîne, directement relié au tympan par son manche. Lorsque le tympan vibre, le marteau transmet ces vibrations à l'enclume. C'est le plus grand des trois osselets (~8 mm)." },
+    enclume:      { title:"Enclume (incus)", text:"Osselet central, intermédiaire entre le marteau et l'étrier. Il reçoit les vibrations du marteau et les transmet à l'étrier. Sa forme rappelle une dent à deux racines." },
+    etrier:       { title:"Étrier (stapes)", text:"Troisième osselet, le plus petit os du corps humain (~3 mm). En forme d'étrier d'équitation, sa platine s'appuie sur la fenêtre ovale de la cochlée et y transmet les vibrations." },
+    manche:       { title:"Manche du marteau", text:"Longue apophyse du marteau enchâssée dans la couche fibreuse du tympan. Toute vibration du tympan is ainsi directement transmise au marteau. Elle est visible à l'otoscope comme une ligne blanchâtre." },
+    articulation: { title:"Articulation incudo-stapédienne", text:"Jonction entre l'enclume et l'étrier. C'est une articulation synoviale dont le rôle est d'assurer une transmission fidèle des vibrations. Sa rigidité peut augmenter avec l'âge (otospongiose)." }
+  },
+  coc: {
+    os:         { title:"Os (rocher)", text:"La cochlée est enchâssée dans le rocher, la partie la plus dense de l'os temporal. Cette protection osseuse préserve les structures fragiles de l'oreille interne des chocs mécaniques." },
+    canalvest:  { title:"Canal vestibulaire (rampe vestibulaire)", text:"Compartiment supérieur de la cochlée rempli de périlymphe. Il part de la fenêtre ovale et court jusqu'à l'apex où il communique avec le canal tympanique par l'hélicotrème." },
+    endolymphe: { title:"Endolymphe", text:"Liquide remplissant le canal cochléaire. Sa composition ionique unique (très riche en K⁺) est essentielle au fonctionnement électrique des cellules ciliées." },
+    strievasc:  { title:"Strie vasculaire", text:"Tissu épithélial hautement vascularisé qui maintient la composition de l'endolymphe en pompant activement les ions. Son dysfonctionnement peut entraîner une surdité de perception." },
+    ligspiral:  { title:"Ligament spiralé", text:"Tissu conjonctif qui relie la membrane basilaire à la paroi externe de la cochlée. Il joue un rôle de soutien mécanique et participe à la régulation ionique de l'endolymphe." },
+    membbasil:  { title:"Membrane basilaire", text:"Structure fondamentale qui porte l'organe de Corti. Sa rigidité varie de la base (rigide, sons aigus) à l'apex (souple, sons graves) — c'est la base physique de la tonotopie." },
+    organcorti: { title:"Organe de Corti", text:"Organe sensoriel de l'audition, posé sur la membrane basilaire. Il contient les cellules ciliées internes (~3 500) et externes (~12 000). C'est ici que se produit la transduction mécanosensorielle." },
+    membtecto:  { title:"Membrane tectoriale", text:"Gel protéique qui recouvre les cils des cellules ciliées. Lors des vibrations, les cils se courbent contre cette membrane, déclenchant l'ouverture des canaux ioniques." },
+    canaltymp:  { title:"Canal tympanique (rampe tympanique)", text:"Compartiment inférieur de la cochlée, rempli de périlymphe. Il court de l'apex jusqu'à la fenêtre ronde, qui absorbe les variations de pression." },
+    limbe:      { title:"Limbe spiral", text:"Épaississement du périoste situé sur la lame spirale osseuse. Il ancre la membrane tectoriale et constitue un point d'attache mécanique essentiel." },
+    nerfcoch:   { title:"Nerf cochléaire", text:"Branche du nerf vestibulo-cochléaire (VIIIe paire crânienne). Formé des axones des neurones bipolaires du ganglion spiral, il achemine les informations auditives vers le tronc cérébral." },
+    canalcoch:  { title:"Canal cochléaire (rampe médiane)", text:"Compartiment triangulaire central rempli d'endolymphe. Délimité par la membrane de Reissner, la membrane basilaire et la strie vasculaire. Contient l'organe de Corti." }
+  },
+  ens: {
+    ext:    { title:"Oreille externe", text:"Comprend le pavillon et le canal auditif externe (~2,5 cm). Elle capte et achemine les ondes sonores vers le tympan. Sa forme contribue à la localisation spatiale des sons." },
+    tympan: { title:"Tympan", text:"Fine membrane élastique (8–9 mm) séparant l'oreille externe de l'oreille moyenne. Elle vibre sous l'effet des ondes sonores et transmet ces vibrations au marteau." },
+    moy:    { title:"Oreille moyenne", text:"Cavité aérienne contenant les osselets et reliée au rhinopharynx par la trompe d'Eustache. Elle adapte l'impédance acoustique entre l'air et les liquides de l'oreille interne." },
+    oss2:   { title:"Osselets", text:"Chaîne de trois os (marteau, enclume, étrier) qui amplifient et transmettent les vibrations du tympan à la fenêtre ovale de la cochlée. Le système multiplie la pression par ~22." },
+    int:    { title:"Oreille interne", text:"Comprend la cochlée (audition) et le vestibule + canaux semi-circulaires (équilibre). La cochlée convertit les vibrations mécaniques en signaux électriques grâce à ses cellules ciliées." },
+    nerf:   { title:"Nerf auditif (VIIIe paire)", text:"Achemine les signaux électriques des cellules ciliées vers les noyaux cochléaires du tronc cérébral, puis vers le cortex auditif du lobe temporal. Composé d'environ 30 000 fibres nerveuses." },
+    cochlée: { title:"Cochlée", text:"Organe spiralé d'environ 35 mm de long, enroulé 2,5 fois. Elle contient l'organe de Corti, qui abrite les ~15 000 cellules ciliées responsables de la transduction mécano-électrique. Chaque cellule est sensible à une fréquence : les sons aigus sont traités à la base, les graves à l'apex (tonotopie)." }
+  }
+};
+
+// ══ LOGIQUE HOTSPOTS ══
+document.querySelectorAll('.hs').forEach(hs => {
+  hs.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const pid = this.dataset.panel, key = this.dataset.key;
+    const entry = DATA[pid]?.[key]; if (!entry) return;
+    this.closest('.diagram-wrap').querySelectorAll('.hs').forEach(h => h.classList.remove('active'));
+    this.classList.add('active');
+    const panel = document.getElementById('panel-'+pid);
+    document.getElementById('panel-'+pid+'-title').textContent = entry.title;
+    document.getElementById('panel-'+pid+'-text').textContent  = entry.text;
+    panel.classList.add('visible');
+    panel.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  });
+  hs.addEventListener('mouseenter', function() {
+    const pid = this.dataset.panel;
+    const tt  = document.getElementById('tooltip-'+pid); if (!tt) return;
+    tt.textContent = this.getAttribute('title');
+    const wr = this.closest('.diagram-wrap').getBoundingClientRect();
+    const hr = this.getBoundingClientRect();
+    tt.style.left = (hr.left - wr.left + hr.width/2) + 'px';
+    tt.style.top  = (hr.top  - wr.top) + 'px';
+    tt.classList.add('visible');
+  });
+  hs.addEventListener('mouseleave', function() {
+    const tt = document.getElementById('tooltip-'+this.dataset.panel);
+    if (tt) tt.classList.remove('visible');
+  });
+});
+
+// ══════════════════════════════════════════════
+// VIEWER 3D — Three.js r128 (Corrigé et Sécurisé)
+// ══════════════════════════════════════════════
+let renderer, scene, camera, model, autoRotate = false;
+let isWireframe = false;
+let mouseDown = false, rightDown = false;
+let lastMouse = { x: 0, y: 0 };
+let spherical = { theta: 0, phi: Math.PI / 2, r: 5 };
+let panOffset = { x: 0, y: 0 };
+let modelCenter = new THREE.Vector3();
+
+(function () {
+  const s1 = document.createElement('script');
+  s1.src = 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js';
+  document.head.appendChild(s1);
+
+  const s2 = document.createElement('script');
+  s2.src = 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js';
+  document.head.appendChild(s2);
+
+  let loaded = 0;
+  function onScriptLoad() { if (++loaded === 2) initViewer(); }
+  s1.onload = onScriptLoad;
+  s2.onload = onScriptLoad;
+})();
+
+function initViewer() {
+  const canvas = document.getElementById('viewer-canvas');
+  const wrap   = canvas.parentElement;
+
+  renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.physicallyCorrectLights = true;
+  renderer.shadowMap.enabled = true;
+
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x0d1117);
+
+  camera = new THREE.PerspectiveCamera(45, wrap.clientWidth / wrap.clientHeight, 0.01, 1000);
+  camera.position.set(0, 0, 5);
+
+  const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+  scene.add(ambient);
+  const dir1 = new THREE.DirectionalLight(0xffffff, 0.8);
+  dir1.position.set(5, 10, 7);
+  scene.add(dir1);
+  const dir2 = new THREE.DirectionalLight(0xd4b44a, 0.3);
+  dir2.position.set(-5, -3, -5);
+  scene.add(dir2);
+
+  // Configuration sécurisée du DRACOLoader attaché à l'instance globale
+  const dracoLoader = new THREE.DRACOLoader();
+  dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/draco/');
+
+  const loader = new THREE.GLTFLoader();
+  loader.setDRACOLoader(dracoLoader);
+
+  const loadingEl = document.getElementById('viewer-loading');
+
+  loader.load(
+    './modele/scene.glb',
+    function (gltf) {
+      model = gltf.scene;
+      const box    = new THREE.Box3().setFromObject(model);
+      const center = box.getCenter(new THREE.Vector3());
+      const size   = box.getSize(new THREE.Vector3());
+      const maxDim = Math.max(size.x, size.y, size.z);
+
+      model.position.sub(center);
+      modelCenter.set(0, 0, 0); 
+      spherical.r   = maxDim * 1.8;
+      camera.far    = maxDim * 20;
+      camera.updateProjectionMatrix();
+
+      scene.add(model);
+      if (loadingEl) loadingEl.classList.add('hidden');
+    },
+    function (xhr) {
+      // Correction de la mise à jour du texte de chargement (sans crash si le span est absent)
+      if (xhr.total && loadingEl) {
+        const pct = Math.round((xhr.loaded / xhr.total) * 100);
+        loadingEl.innerHTML = '<div class="loader-ring"></div> Chargement… ' + pct + '%';
+      }
+    },
+    function (err) {
+      console.error('Erreur chargement GLB :', err);
+      if (loadingEl) {
+        loadingEl.innerHTML = '⚠ Impossible de charger le modèle.<br>Vérifiez que le fichier <code>modele/scene.glb</code> existe.';
+      }
+    }
+  );
+
+  function onResize() {
+    const w = wrap.clientWidth, h = wrap.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  onResize();
+  window.addEventListener('resize', onResize);
+
+  canvas.addEventListener('mousedown', e => {
+    if (e.button === 0) mouseDown = true;
+    if (e.button === 2) rightDown = true;
+    lastMouse = { x: e.clientX, y: e.clientY };
+  });
+  window.addEventListener('mouseup', () => { mouseDown = false; rightDown = false; });
+  canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+  canvas.addEventListener('mousemove', e => {
+    const dx = e.clientX - lastMouse.x;
+    const dy = e.clientY - lastMouse.y;
+    lastMouse = { x: e.clientX, y: e.clientY };
+    if (mouseDown) {
+      spherical.theta -= dx * 0.01;
+      spherical.phi = Math.max(0.05, Math.min(Math.PI - 0.05, spherical.phi + dy * 0.01));
+    }
+    if (rightDown) {
+      panOffset.x -= dx * 0.004;
+      panOffset.y += dy * 0.004;
+    }
+  });
+
+  canvas.addEventListener('wheel', e => {
+    e.preventDefault();
+    spherical.r = Math.max(0.5, spherical.r + e.deltaY * 0.01);
+  }, { passive: false });
+
+  let lastTouch = null;
+  canvas.addEventListener('touchstart', e => { lastTouch = e.touches[0]; });
+  canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (!lastTouch) return;
+    const dx = e.touches[0].clientX - lastTouch.clientX;
+    const dy = e.touches[0].clientY - lastTouch.clientY;
+    spherical.theta -= dx * 0.01;
+    spherical.phi = Math.max(0.05, Math.min(Math.PI - 0.05, spherical.phi + dy * 0.01));
+    lastTouch = e.touches[0];
+  }, { passive: false });
+
+  function animate() {
+    requestAnimationFrame(animate);
+    if (autoRotate) spherical.theta += 0.005;
+    const x = spherical.r * Math.sin(spherical.phi) * Math.sin(spherical.theta);
+    const y = spherical.r * Math.cos(spherical.phi);
+    const z = spherical.r * Math.sin(spherical.phi) * Math.cos(spherical.theta);
+    camera.position.set(x + panOffset.x, y + panOffset.y, z);
+    camera.lookAt(panOffset.x, panOffset.y, 0);
+    renderer.render(scene, camera);
+  }
+  animate();
+}
+
+function resetCamera() {
+  spherical = { theta: 0, phi: Math.PI / 2, r: spherical.r };
+  panOffset = { x: 0, y: 0 };
+}
+
+function toggleWireframe() {
+  isWireframe = !isWireframe;
+  if (!model) return;
+  model.traverse(obj => {
+    if (obj.isMesh) obj.material.wireframe = isWireframe;
+  });
+}
+
+function toggleRotation() {
+  autoRotate = !autoRotate;
+  const btn = document.querySelector('[onclick="toggleRotation()"]');
+  if (btn) btn.textContent = autoRotate ? '⏸ Stop rotation' : '▶ Rotation auto';
+}
+</script>
+
+</body>
+</html>
