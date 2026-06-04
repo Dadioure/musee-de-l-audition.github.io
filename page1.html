@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>01 · Onde sonore — Musée de l'Audition</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@200;300;400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #f4f0e8; --warm-white: #faf8f4; --ink: #1a1410;
+      --brown: #5c3d2e; --gold: #b8960c; --gold-light: #d4b44a;
+      --muted: #8a7968; --line: #d8d0c0;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Josefin Sans', sans-serif; background: var(--warm-white); color: var(--ink); overflow-x: hidden; }
+
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(26,20,16,0.97); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(184,150,12,0.2); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 3.5rem; }
+    .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-style: italic; color: var(--gold-light); letter-spacing: 0.05em; text-decoration: none; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--gold-light); }
+
+    .page-header { background: var(--ink); padding: 5rem 2rem 4rem; position: relative; overflow: hidden; }
+    .page-header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 70% at 30% 60%, rgba(184,150,12,0.1) 0%, transparent 60%); }
+    .page-num { font-family: 'Cormorant Garamond', serif; font-size: 8rem; font-weight: 300; color: rgba(184,150,12,0.12); line-height: 1; position: absolute; right: 2rem; bottom: -1rem; }
+    .page-header-content { max-width: 700px; position: relative; }
+    .chapter-label { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.5rem; }
+    .page-header h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 300; color: var(--cream); line-height: 1.1; }
+    .page-header h1 em { font-style: italic; color: var(--gold-light); }
+    .page-intro { margin-top: 1.5rem; font-size: 0.8rem; letter-spacing: 0.06em; color: var(--muted); line-height: 1.8; max-width: 560px; }
+
+    .section-nav { background: var(--cream); border-bottom: 1px solid var(--line); padding: 0 2rem; display: flex; overflow-x: auto; }
+    .section-nav a { padding: 1rem 1.5rem; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); text-decoration: none; white-space: nowrap; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s; }
+    .section-nav a:hover { color: var(--ink); border-color: var(--gold); }
+
+    main { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+    section.chapter { padding: 5rem 0; border-bottom: 1px solid var(--line); }
+    section.chapter:last-child { border-bottom: none; }
+    .section-label { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 2.5rem; display: flex; align-items: center; gap: 1rem; }
+    .section-label::after { content:''; flex:1; height:1px; background:var(--line); }
+    h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 300; line-height: 1.2; margin-bottom: 1.5rem; }
+    h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 400; margin-bottom: 1rem; color: var(--brown); }
+    p { font-size: 0.82rem; line-height: 1.85; color: #3d3028; max-width: 680px; letter-spacing: 0.03em; margin-bottom: 1rem; }
+    .gold-rule { width:3rem; height:1px; background:var(--gold); margin: 2rem 0; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; margin: 2rem 0; }
+    @media(max-width:700px){ .two-col { grid-template-columns: 1fr; } }
+    .note-box { background: var(--cream); border-left: 3px solid var(--gold); padding: 1.2rem 1.8rem; margin: 2rem 0; font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-style: italic; color: var(--brown); line-height: 1.6; max-width: 700px; }
+    .img-caption { text-align: center; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-top: 0.5rem; margin-bottom: 1.5rem; }
+
+    /* ── ANIMATION PROPAGATION ── */
+    .propagation-wrap {
+      background: #0a0e1a;
+      border: 1.5px solid var(--line);
+      border-radius: 2px;
+      padding: 1rem;
+      margin: 2rem 0;
+      position: relative;
+    }
+    .propagation-wrap canvas { width: 100%; display: block; }
+    .prop-hint { font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.2); text-align: center; margin-top: 0.6rem; }
+
+    .prop-controls { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem; align-items: center; }
+    .prop-btn { padding: 0.5rem 1.2rem; font-family: 'Josefin Sans', sans-serif; font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase; border: 1.5px solid var(--line); background: var(--warm-white); color: var(--muted); cursor: pointer; transition: all 0.2s; }
+    .prop-btn:hover, .prop-btn.active { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+    .prop-label { font-size: 0.65rem; letter-spacing: 0.12em; color: var(--muted); }
+
+    /* ── COMPRESSION / RARÉFACTION INTERACTIVE ── */
+    .molecules-wrap {
+      background: #0a0e1a;
+      border: 1.5px solid var(--line);
+      border-radius: 2px;
+      padding: 1rem;
+      margin: 2rem 0;
+    }
+    .molecules-wrap canvas { width: 100%; display: block; }
+    .mol-hint { font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.2); text-align: center; margin-top: 0.5rem; }
+
+    /* ── QUIZ MILIEUX ── */
+    .milieux-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: var(--line); border: 1.5px solid var(--line); margin: 2rem 0; }
+    @media(max-width:800px){ .milieux-grid { grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); } }
+    .milieu-card { background: var(--warm-white); padding: 1.5rem; cursor: pointer; transition: background 0.2s; }
+    .milieu-card:hover { background: var(--cream); }
+    .milieu-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+    .milieu-name { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--ink); margin-bottom: 0.4rem; }
+    .milieu-speed { font-size: 0.65rem; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 0.5rem; }
+    .milieu-desc { font-size: 0.7rem; line-height: 1.65; color: var(--muted); }
+    .milieu-bar { height: 3px; background: var(--line); margin-top: 1rem; }
+    .milieu-bar-fill { height: 100%; background: var(--gold); transition: width 0.6s ease; }
+
+    /* ── CALCULATEUR VITESSE ── */
+    .calc-box {
+      background: var(--ink); border-radius: 2px; padding: 2.5rem; margin: 2rem 0;
+    }
+    .calc-box h3 { color: var(--gold-light); margin-bottom: 0.5rem; }
+    .calc-box p  { color: rgba(244,240,232,0.6); font-size: 0.78rem; max-width: 560px; }
+    .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem; }
+    @media(max-width:600px){ .calc-grid { grid-template-columns: 1fr; } }
+    .calc-group { display: flex; flex-direction: column; gap: 0.5rem; }
+    .calc-label { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between; }
+    .calc-label span { color: var(--gold-light); }
+    input[type=range] { -webkit-appearance: none; width: 100%; height: 3px; background: rgba(255,255,255,0.15); border-radius: 2px; outline: none; }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--gold); cursor: pointer; }
+    .calc-result { margin-top: 2rem; display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
+    .calc-val { text-align: center; }
+    .calc-val-num { font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: var(--gold-light); line-height: 1; }
+    .calc-val-unit { font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-top: 0.3rem; }
+
+    /* ── COMPARAISON LUMIÈRE / SON ── */
+    .race-wrap { background: #0a0e1a; border: 1.5px solid var(--line); border-radius: 2px; padding: 1.5rem; margin: 2rem 0; }
+    .race-wrap h3 { color: var(--gold-light); font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; margin-bottom: 1rem; }
+    .race-track { position: relative; height: 24px; background: rgba(255,255,255,0.04); border-radius: 2px; margin: 0.75rem 0; overflow: hidden; }
+    .race-fill { position: absolute; left: 0; top: 0; height: 100%; border-radius: 2px; transition: width 1.5s ease; }
+    .race-label { font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 0.3rem; }
+    .race-btn { margin-top: 1rem; padding: 0.65rem 1.5rem; font-family: 'Josefin Sans', sans-serif; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; background: var(--gold); color: var(--ink); border: none; cursor: pointer; transition: background 0.2s; }
+    .race-btn:hover { background: var(--gold-light); }
+    .race-result { font-size: 0.72rem; color: rgba(255,255,255,0.5); margin-top: 1rem; min-height: 1.4rem; line-height: 1.6; }
+
+    /* ── ACCORDÉON PHÉNOMÈNES ── */
+    .pheno-list { display: flex; flex-direction: column; gap: 1px; background: var(--line); border: 1.5px solid var(--line); margin: 2rem 0; }
+    .pheno-item { background: var(--warm-white); padding: 1.5rem 2rem; cursor: pointer; transition: background 0.2s; position: relative; }
+    .pheno-item:hover { background: var(--cream); }
+    .pheno-title { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; color: var(--ink); margin-bottom: 0.3rem; }
+    .pheno-short { font-size: 0.72rem; color: var(--muted); }
+    .pheno-detail { font-size: 0.78rem; line-height: 1.75; color: #3d3028; max-height: 0; overflow: hidden; transition: max-height 0.4s ease, margin-top 0.3s; }
+    .pheno-detail.open { max-height: 400px; margin-top: 0.75rem; }
+    .pheno-arrow { position: absolute; right: 1.5rem; top: 1.6rem; font-size: 0.7rem; color: var(--muted); transition: transform 0.3s; }
+    .pheno-item.open .pheno-arrow { transform: rotate(90deg); }
+
+    footer { border-top: 1px solid var(--line); padding: 3rem 2rem; text-align: center; color: var(--muted); font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; margin-top: 4rem; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+    .chapter { animation: fadeUp 0.6s ease both; }
+    @media(max-width:600px){ .nav-links{display:none} }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html#sommaire">← Musée de l'Audition</a>
+  <ul class="nav-links">
+    <li><a href="#definition">Définition</a></li>
+    <li><a href="#propagation">Propagation</a></li>
+    <li><a href="#milieux">Milieux</a></li>
+    <li><a href="#phenomenes">Phénomènes</a></li>
+  </ul>
+</nav>
+
+<header class="page-header">
+  <div class="page-header-content">
+    <div class="chapter-label">Chapitre 01 · Exposition permanente</div>
+    <h1>L'onde<br><em>sonore</em></h1>
+    <p class="page-intro">Qu'est-ce qu'un son, fondamentalement ? Une perturbation mécanique qui se propage dans un milieu matériel — de l'air, de l'eau, du métal. Explorez la physique de l'onde sonore de façon interactive.</p>
+  </div>
+  <div class="page-num">01</div>
+</header>
+
+<div class="section-nav">
+  <a href="#definition">I. Qu'est-ce qu'un son ?</a>
+  <a href="#propagation">II. Propagation</a>
+  <a href="#milieux">III. Milieux de propagation</a>
+  <a href="#vitesse">IV. Vitesse du son</a>
+  <a href="#phenomenes">V. Phénomènes ondulatoires</a>
+</div>
+
+<main>
+
+  <!-- ══ I. DÉFINITION ══ -->
+  <section class="chapter" id="definition">
+    <div class="section-label">I · Qu'est-ce qu'un son ?</div>
+    <h2>Un son est une onde mécanique</h2>
+
+    <div class="two-col">
+      <div>
+        <p>Un son est une <strong>perturbation mécanique qui se propage dans un milieu matériel</strong> sous forme d'onde de pression. Lorsqu'un objet vibre — une corde de guitare, les cordes vocales, une membrane de haut-parleur — il pousse et tire les molécules d'air autour de lui, créant alternativement des zones de <strong>compression</strong> (molécules rapprochées, pression élevée) et de <strong>raréfaction</strong> (molécules écartées, pression basse).</p>
+        <p>Ces variations de pression se propagent de proche en proche dans le milieu, comme des vagues sur l'eau — mais en trois dimensions. Ce n'est pas la matière elle-même qui se déplace, mais bien l'<em>énergie</em> de la perturbation.</p>
+        <p>Le son est une onde <strong>longitudinale</strong> : les molécules oscillent dans le même sens que la direction de propagation (contrairement aux vagues de l'eau, qui sont transversales).</p>
+      </div>
+      <div>
+        <!--
+        ════════════════════════════════════
+        IMAGE À AJOUTER :
+        onde_longitudinale.jpg
+        Schéma montrant la différence entre
+        onde longitudinale et transversale,
+        avec zones de compression/raréfaction
+        ════════════════════════════════════
+        -->
+        <img src="images/onde_longitudinale.jpg" alt="Onde longitudinale — compression et raréfaction" style="width:100%; border:1.5px solid var(--line); display:block;"/>
+        <p class="img-caption">Onde longitudinale — compression et raréfaction</p>
+      </div>
+    </div>
+
+    <!-- Simulation molécules -->
+    <h3>Visualiser la compression et la raréfaction</h3>
+    <p style="font-size:.75rem;color:var(--muted)">Cette simulation montre le déplacement des molécules d'air lors du passage d'une onde sonore. La source est à gauche.</p>
+    <div class="molecules-wrap">
+      <canvas id="mol-canvas" height="120"></canvas>
+      <div class="mol-hint">Les points représentent les molécules d'air — zones denses = compression · zones claires = raréfaction</div>
+    </div>
+
+    <div class="note-box">Le son ne peut pas se propager dans le vide — il n'y a pas de molécules à mettre en mouvement. C'est pourquoi l'espace est silencieux, et pourquoi les astronautes communiquent par radio plutôt que par la voix.</div>
+  </section>
+
+  <!-- ══ II. PROPAGATION ══ -->
+  <section class="chapter" id="propagation">
+    <div class="section-label">II · Propagation de l'onde</div>
+    <h2>Comment le son voyage-t-il ?</h2>
+    <p>L'onde sonore se propage de façon sphérique à partir de la source, en s'atténuant avec la distance. Observez ci-dessous la propagation en temps réel — choisissez le type d'onde et cliquez pour créer une source.</p>
+    <div class="gold-rule"></div>
+
+    <div class="propagation-wrap">
+      <canvas id="prop-canvas" height="260"></canvas>
+      <div class="prop-hint">Cliquez sur la zone pour créer une source sonore</div>
+    </div>
+
+    <div class="prop-controls">
+      <button class="prop-btn active" id="btn-point" onclick="setPropMode('point',this)">Source ponctuelle</button>
+      <button class="prop-btn" id="btn-plan" onclick="setPropMode('plan',this)">Onde plane</button>
+      <button class="prop-btn" id="btn-reset" onclick="resetProp()">↺ Réinitialiser</button>
+      <button class="prop-btn" id="btn-stop" onclick="toggleProp(this)">⏸ Stop</button>
+      <span class="prop-label" id="prop-info">Cliquez n'importe où pour placer une source</span>
+    </div>
+
+    <div class="two-col" style="margin-top:3rem">
+      <div>
+        <h3>Loi de l'inverse des carrés</h3>
+        <p>L'intensité sonore d'une source ponctuelle diminue proportionnellement au carré de la distance. Si vous doublez la distance par rapport à la source, l'intensité est divisée par 4 — soit une diminution de 6 dB. À 10 mètres, elle est 100 fois plus faible qu'à 1 mètre.</p>
+      </div>
+      <div>
+        <h3>Onde plane vs sphérique</h3>
+        <p>Près d'une grande surface vibrante (haut-parleur de grande taille, mur), l'onde peut être approximée comme <strong>plane</strong> — les fronts d'onde sont parallèles et l'atténuation est moins rapide. Loin de toute source, l'onde est toujours sphérique.</p>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <!--
+        ════════════════════════════════════
+        IMAGE À AJOUTER :
+        diapason.jpg
+        Photo d'un diapason vibrant,
+        idéalement plongé dans de l'eau
+        pour visualiser les vibrations
+        ════════════════════════════════════
+        -->
+        <img src="images/diapason.jpg" alt="Diapason en vibration" style="width:100%; border:1.5px solid var(--line); display:block;"/>
+        <p class="img-caption">Diapason — source sonore de référence à 440 Hz</p>
+      </div>
+      <div>
+        <h3>Longueur d'onde</h3>
+        <p>La <strong>longueur d'onde (λ)</strong> est la distance entre deux compressions successives. Elle est liée à la fréquence (f) et à la vitesse du son (v) par la relation : <strong>λ = v / f</strong>.</p>
+        <p>Un son grave à 100 Hz a une longueur d'onde d'environ 3,4 m dans l'air. Un son aigu à 10 000 Hz a une longueur d'onde de 3,4 cm seulement — ce qui explique pourquoi les hautes fréquences sont plus facilement absorbées par les obstacles.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ III. MILIEUX ══ -->
+  <section class="chapter" id="milieux">
+    <div class="section-label">III · Milieux de propagation</div>
+    <h2>Le son dans l'air, l'eau, les solides…</h2>
+    <p>La vitesse du son dépend entièrement du milieu dans lequel il se propage — de son élasticité et de sa densité. Plus un milieu est rigide et peu dense, plus le son y va vite.</p>
+    <div class="gold-rule"></div>
+
+    <div class="milieux-grid">
+
+      <div class="milieu-card">
+        <div class="milieu-icon">💨</div>
+        <div class="milieu-name">Air (20°C)</div>
+        <div class="milieu-speed">343 m/s</div>
+        <div class="milieu-desc">La vitesse de référence. Elle augmente avec la température : +0,6 m/s par degré Celsius. Par temps froid, le son est légèrement plus lent.</div>
+        <div class="milieu-bar"><div class="milieu-bar-fill" style="width:22%"></div></div>
+      </div>
+
+      <div class="milieu-card">
+        <div class="milieu-icon">💧</div>
+        <div class="milieu-name">Eau douce</div>
+        <div class="milieu-speed">1 480 m/s</div>
+        <div class="milieu-desc">Environ 4 fois plus rapide que dans l'air. L'eau est bien plus incompressible que l'air, ce qui facilite la propagation. Les baleines exploitent cela pour communiquer sur des milliers de km.</div>
+        <div class="milieu-bar"><div class="milieu-bar-fill" style="width:48%"></div></div>
+      </div>
+
+      <div class="milieu-card">
+        <div class="milieu-icon">🌊</div>
+        <div class="milieu-name">Eau de mer</div>
+        <div class="milieu-speed">1 531 m/s</div>
+        <div class="milieu-desc">Légèrement plus rapide que l'eau douce en raison de la salinité. Le sonar militaire et la navigation sous-marine exploitent cette propriété.</div>
+        <div class="milieu-bar"><div class="milieu-bar-fill" style="width:50%"></div></div>
+      </div>
+
+      <div class="milieu-card">
+        <div class="milieu-icon">🔩</div>
+        <div class="milieu-name">Acier</div>
+        <div class="milieu-speed">5 100 m/s</div>
+        <div class="milieu-desc">Le son va 15 fois plus vite dans l'acier que dans l'air. Les constructeurs de bâtiments tiennent compte de cette propriété pour l'isolation phonique des structures métalliques.</div>
+        <div class="milieu-bar"><div class="milieu-bar-fill" style="width:90%"></div></div>
+      </div>
+
+      <div class="milieu-card">
+        <div class="milieu-icon">🚫</div>
+        <div class="milieu-name">Vide</div>
+        <div class="milieu-speed">0 m/s</div>
+        <div class="milieu-desc">Le son ne se propage pas dans le vide. Sans molécules à mettre en mouvement, aucune perturbation mécanique n'est possible. L'espace interstellaire est absolument silencieux.</div>
+        <div class="milieu-bar"><div class="milieu-bar-fill" style="width:0%"></div></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══ IV. VITESSE DU SON ══ -->
+  <section class="chapter" id="vitesse">
+    <div class="section-label">IV · Vitesse du son</div>
+    <h2>Calculer & comparer</h2>
+    <div class="gold-rule"></div>
+
+    <!-- Calculateur température -->
+    <div class="calc-box">
+      <h3>🌡️ Vitesse du son selon la température</h3>
+      <p style="margin-top:.4rem">La vitesse du son dans l'air dépend de la température. Faites glisser le curseur pour la calculer.</p>
+      <div class="calc-grid">
+        <div class="calc-group">
+          <div class="calc-label">Température <span id="lbl-temp">20 °C</span></div>
+          <input type="range" id="sl-temp" min="-30" max="50" value="20" oninput="updateCalc()"/>
+        </div>
+        <div class="calc-group">
+          <div class="calc-label">Distance <span id="lbl-dist">1 000 m</span></div>
+          <input type="range" id="sl-dist" min="10" max="10000" value="1000" step="10" oninput="updateCalc()"/>
+        </div>
+      </div>
+      <div class="calc-result">
+        <div class="calc-val">
+          <div class="calc-val-num" id="res-speed">343</div>
+          <div class="calc-val-unit">m/s — vitesse</div>
+        </div>
+        <div class="calc-val">
+          <div class="calc-val-num" id="res-time">2.9</div>
+          <div class="calc-val-unit">secondes — temps de trajet</div>
+        </div>
+        <div class="calc-val">
+          <div class="calc-val-num" id="res-kmh">1235</div>
+          <div class="calc-val-unit">km/h — en km/h</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Course son vs lumière -->
+    <div class="race-wrap">
+      <h3>⚡ Son contre lumière — qui arrive le premier ?</h3>
+      <p style="color:rgba(244,240,232,0.6);font-size:.78rem;margin-bottom:1rem">Sur une distance de 10 km, visualisez l'écart colossal entre la vitesse du son et celle de la lumière.</p>
+      <div class="race-label">Lumière — 299 792 km/s</div>
+      <div class="race-track"><div class="race-fill" id="race-lumiere" style="width:0%;background:#f1c40f"></div></div>
+      <div class="race-label">Son dans l'air — 343 m/s</div>
+      <div class="race-track"><div class="race-fill" id="race-son" style="width:0%;background:var(--gold)"></div></div>
+      <button class="race-btn" onclick="startRace()">▶ Lancer la simulation</button>
+      <div class="race-result" id="race-result"></div>
+    </div>
+
+    <div class="note-box">L'éclair et le tonnerre sont produits simultanément. Mais la lumière parcourt 10 km en 0,000033 seconde — le son, lui, met près de 30 secondes. En comptant les secondes entre l'éclair et le tonnerre, on peut estimer la distance de l'orage : 3 secondes ≈ 1 km.</div>
+  </section>
+
+  <!-- ══ V. PHÉNOMÈNES ONDULATOIRES ══ -->
+  <section class="chapter" id="phenomenes">
+    <div class="section-label">V · Phénomènes ondulatoires</div>
+    <h2>Ce que les ondes sonores peuvent faire</h2>
+    <p>En tant qu'onde, le son obéit à des lois physiques générales qui s'appliquent à toutes les ondes. Cliquez sur chaque phénomène pour le découvrir.</p>
+    <div class="gold-rule"></div>
+
+    <div class="pheno-list">
+
+      <div class="pheno-item" onclick="togglePheno(this)">
+        <div class="pheno-title">Réflexion — l'écho</div>
+        <div class="pheno-short">Le son rebondit sur les surfaces.</div>
+        <div class="pheno-detail">Lorsqu'une onde sonore rencontre une surface suffisamment grande et rigide, elle est réfléchie. C'est l'<strong>écho</strong>. Pour percevoir un écho distinct, il faut que l'obstacle soit à plus de ~17 mètres (le son parcourt 34 m aller-retour en 0,1 s, durée minimale pour distinguer deux sons). La réverbération d'une salle est la somme de milliers de réflexions successives.</div>
+        <div class="pheno-arrow">›</div>
+      </div>
+
+      <div class="pheno-item" onclick="togglePheno(this)">
+        <div class="pheno-title">Réfraction — le son qui se courbe</div>
+        <div class="pheno-short">La vitesse varie selon le milieu, l'onde change de direction.</div>
+        <div class="pheno-detail">Quand une onde sonore passe d'un milieu à un autre (ou même quand la température varie dans l'air), sa vitesse change et elle se courbe. C'est pourquoi, par temps froid, le son se propage mieux le soir qu'en pleine journée : les couches d'air froides proches du sol ralentissent le son, qui se courbe vers le bas et reste audible plus loin.</div>
+        <div class="pheno-arrow">›</div>
+      </div>
+
+      <div class="pheno-item" onclick="togglePheno(this)">
+        <div class="pheno-title">Diffraction — contourner les obstacles</div>
+        <div class="pheno-short">Le son peut contourner les coins et les ouvertures.</div>
+        <div class="pheno-detail">La diffraction est la capacité d'une onde à contourner des obstacles ou à se propager en éventail à travers une ouverture. Elle est d'autant plus importante que la longueur d'onde est grande par rapport à l'obstacle. C'est pourquoi les sons graves (grande longueur d'onde) passent plus facilement à travers une porte entrouverte que les sons aigus. On entend les basses depuis la rue bien avant d'entrer dans une discothèque.</div>
+        <div class="pheno-arrow">›</div>
+      </div>
+
+      <div class="pheno-item" onclick="togglePheno(this)">
+        <div class="pheno-title">Interférence — sons qui s'annulent ou s'amplifient</div>
+        <div class="pheno-short">Deux ondes peuvent se renforcer ou se détruire mutuellement.</div>
+        <div class="pheno-detail">Quand deux ondes sonores se croisent, elles se superposent. Si leurs compressions coïncident (<strong>interférence constructive</strong>), le son est amplifié. Si une compression rencontre une raréfaction (<strong>interférence destructive</strong>), le son s'annule. C'est le principe des casques à réduction de bruit active : ils génèrent un son exactement opposé au bruit ambiant pour l'annuler.</div>
+        <div class="pheno-arrow">›</div>
+      </div>
+
+      <div class="pheno-item" onclick="togglePheno(this)">
+        <div class="pheno-title">Effet Doppler — le son qui change de hauteur</div>
+        <div class="pheno-short">La fréquence perçue change selon le mouvement de la source.</div>
+        <div class="pheno-detail">Quand une source sonore se rapproche, les fronts d'onde sont compressés devant elle : la fréquence perçue est plus haute. Quand elle s'éloigne, ils sont étirés : la fréquence est plus basse. C'est le son caractéristique d'une voiture de course ou d'une ambulance qui passe. Les radars de police et les échographes médicaux utilisent cet effet pour mesurer des vitesses.</div>
+        <div class="pheno-arrow">›</div>
+      </div>
+
+      <div class="pheno-item" onclick="togglePheno(this)">
+        <div class="pheno-title">Absorption — le son s'affaiblit</div>
+        <div class="pheno-short">Le milieu converti une partie de l'énergie sonore en chaleur.</div>
+        <div class="pheno-detail">En se propageant, une onde sonore perd de l'énergie par friction entre les molécules du milieu. Les matériaux poreux (mousses, laine de verre, tissu) sont d'excellents absorbants car ils présentent une grande surface interne. C'est le principe de l'isolation acoustique : convertir l'énergie du son en légère chaleur plutôt que de la laisser se propager.</div>
+        <div class="pheno-arrow">›</div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>Musée de l'Audition &nbsp;·&nbsp; Chapitre 01 — L'onde sonore</p>
+  <p style="margin-top:.5rem"><a href="index.html#sommaire" style="color:var(--gold);text-decoration:none">← Retour au sommaire</a></p>
+</footer>
+
+<script>
+// ══════════════════════════════════════════════
+// SIMULATION MOLÉCULES
+// ══════════════════════════════════════════════
+const molCanvas = document.getElementById('mol-canvas');
+const molCtx    = molCanvas.getContext('2d');
+let molPhase    = 0;
+const N_COLS = 40, N_ROWS = 5;
+
+function drawMolecules() {
+  const W = molCanvas.offsetWidth; molCanvas.width = W;
+  const H = molCanvas.height;
+  molCtx.clearRect(0, 0, W, H);
+
+  const cellW = W / N_COLS;
+  const cellH = H / N_ROWS;
+
+  for (let col = 0; col < N_COLS; col++) {
+    for (let row = 0; row < N_ROWS; row++) {
+      const baseX = (col + 0.5) * cellW;
+      const baseY = (row + 0.5) * cellH;
+      // Déplacement longitudinal selon l'onde
+      const wave  = Math.sin((col / N_COLS) * 4 * Math.PI - molPhase);
+      const dx    = wave * cellW * 0.4;
+      const x     = baseX + dx;
+      const alpha = 0.3 + 0.7 * ((wave + 1) / 2);
+      const r     = 2 + wave * 0.8;
+
+      molCtx.beginPath();
+      molCtx.arc(x, baseY, Math.max(1, r), 0, Math.PI * 2);
+      molCtx.fillStyle = `rgba(212,180,74,${alpha})`;
+      molCtx.fill();
+    }
+  }
+
+  // Légendes
+  molCtx.font = '9px Josefin Sans, sans-serif';
+  molCtx.fillStyle = 'rgba(192,57,43,0.7)';
+  molCtx.fillText('COMPRESSION', W * 0.1, 14);
+  molCtx.fillStyle = 'rgba(41,128,185,0.7)';
+  molCtx.fillText('RARÉFACTION', W * 0.35, 14);
+
+  molPhase += 0.04;
+  requestAnimationFrame(drawMolecules);
+}
+drawMolecules();
+
+// ══════════════════════════════════════════════
+// SIMULATION PROPAGATION
+// ══════════════════════════════════════════════
+const propCanvas = document.getElementById('prop-canvas');
+const pCtx       = propCanvas.getContext('2d');
+let propMode     = 'point';
+let waves        = [];
+let planPhase    = 0;
+let propRaf      = null;
+
+let propPaused = false;
+
+function toggleProp(btn) {
+  propPaused = !propPaused;
+  btn.textContent = propPaused ? '▶ Reprendre' : '⏸ Stop';
+  if (!propPaused) animProp();
+}
+
+function setPropMode(mode, btn) {
+  propMode = mode;
+  document.querySelectorAll('.prop-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (mode === 'plan') {
+    waves = [];
+    document.getElementById('prop-info').textContent = 'Onde plane — fronts d\'onde parallèles';
+  } else {
+    document.getElementById('prop-info').textContent = 'Cliquez n\'importe où pour placer une source';
+  }
+}
+
+function resetProp() {
+  waves = []; planPhase = 0;
+  document.getElementById('prop-info').textContent = 'Cliquez n\'importe où pour placer une source';
+}
+
+propCanvas.addEventListener('click', function(e) {
+  if (propMode !== 'point') return;
+  const rect = propCanvas.getBoundingClientRect();
+  const scaleX = propCanvas.width / rect.width;
+  const scaleY = propCanvas.height / rect.height;
+  const x = (e.clientX - rect.left) * scaleX;
+  const y = (e.clientY - rect.top)  * scaleY;
+  waves.push({ x, y, r: 0, born: Date.now() });
+  document.getElementById('prop-info').textContent = `Source placée en (${Math.round(x)}, ${Math.round(y)})`;
+});
+
+function animProp() {
+  if (propPaused) return;
+  const W = propCanvas.offsetWidth; propCanvas.width = W;
+  const H = propCanvas.height;
+  pCtx.clearRect(0, 0, W, H);
+
+  // Fond grille
+  pCtx.strokeStyle = 'rgba(255,255,255,0.03)';
+  pCtx.lineWidth = 1;
+  for (let x = 0; x < W; x += 40) { pCtx.beginPath(); pCtx.moveTo(x,0); pCtx.lineTo(x,H); pCtx.stroke(); }
+  for (let y = 0; y < H; y += 40) { pCtx.beginPath(); pCtx.moveTo(0,y); pCtx.lineTo(W,y); pCtx.stroke(); }
+
+  if (propMode === 'point') {
+    // Nouvelles ondes automatiques depuis centre si aucune source
+    if (waves.length === 0) {
+      waves.push({ x: W/2, y: H/2, r: 0, born: Date.now() });
+    }
+    // Ajouter régulièrement des anneaux depuis chaque source
+    waves.forEach(w => {
+      if (Date.now() - w.born > 500 && !w.last) w.last = Date.now();
+      if (w.last && Date.now() - w.last > 400) {
+        waves.push({ x: w.x, y: w.y, r: 0, born: Date.now(), parent: true });
+        w.last = Date.now();
+      }
+    });
+
+    waves = waves.filter(w => w.r < Math.max(W, H) * 1.5);
+    waves.forEach(w => {
+      w.r += 1.8;
+      const alpha = Math.max(0, 0.7 - w.r / (Math.max(W,H) * 0.8));
+      pCtx.beginPath();
+      pCtx.arc(w.x, w.y, w.r, 0, Math.PI * 2);
+      pCtx.strokeStyle = `rgba(212,180,74,${alpha})`;
+      pCtx.lineWidth = 1.5;
+      pCtx.stroke();
+      // Point source
+      if (!w.parent) {
+        pCtx.beginPath(); pCtx.arc(w.x, w.y, 5, 0, Math.PI*2);
+        pCtx.fillStyle = 'rgba(212,180,74,0.9)'; pCtx.fill();
+      }
+    });
+
+  } else {
+    // Onde plane
+    const spacing = 30;
+    for (let i = 0; i < 20; i++) {
+      const x = (planPhase * 2 + i * spacing) % (W + spacing) - spacing;
+      const alpha = 0.15 + 0.55 * Math.abs(Math.sin(i * 0.5));
+      pCtx.beginPath(); pCtx.moveTo(x, 0); pCtx.lineTo(x, H);
+      pCtx.strokeStyle = `rgba(212,180,74,${alpha})`;
+      pCtx.lineWidth = 2;
+      pCtx.stroke();
+    }
+    planPhase += 1.2;
+    // Flèche direction
+    pCtx.fillStyle = 'rgba(212,180,74,0.5)';
+    pCtx.font = '11px sans-serif';
+    pCtx.fillText('→ direction de propagation', 12, H - 12);
+  }
+
+  propRaf = requestAnimationFrame(animProp);
+}
+animProp();
+
+// ══════════════════════════════════════════════
+// CALCULATEUR VITESSE DU SON
+// ══════════════════════════════════════════════
+function updateCalc() {
+  const T    = +document.getElementById('sl-temp').value;
+  const dist = +document.getElementById('sl-dist').value;
+  // Formule : v = 331.3 × √(1 + T/273.15)
+  const v    = 331.3 * Math.sqrt(1 + T / 273.15);
+  const time = dist / v;
+  document.getElementById('lbl-temp').textContent = T + ' °C';
+  document.getElementById('lbl-dist').textContent = dist.toLocaleString('fr') + ' m';
+  document.getElementById('res-speed').textContent = v.toFixed(1);
+  document.getElementById('res-time').textContent  = time.toFixed(2);
+  document.getElementById('res-kmh').textContent   = (v * 3.6).toFixed(0);
+}
+updateCalc();
+
+// ══════════════════════════════════════════════
+// COURSE SON / LUMIÈRE
+// ══════════════════════════════════════════════
+let raceRunning = false;
+function startRace() {
+  if (raceRunning) return;
+  raceRunning = true;
+  document.getElementById('race-lumiere').style.width = '0%';
+  document.getElementById('race-son').style.width     = '0%';
+  document.getElementById('race-result').textContent  = '';
+
+  // La lumière arrive quasi instantanément (0.000033s pour 10km)
+  setTimeout(() => {
+    document.getElementById('race-lumiere').style.width = '100%';
+    document.getElementById('race-result').textContent  = '⚡ La lumière arrive en 0,000033 seconde. Le son arrive dans…';
+  }, 200);
+
+  // Le son met 10000/343 ≈ 29.2s — on simule en accéléré sur 4s
+  const duration = 4000;
+  const start    = Date.now();
+  function animSon() {
+    const pct = Math.min(1, (Date.now() - start) / duration);
+    document.getElementById('race-son').style.width = (pct * 100) + '%';
+    const elapsed = pct * 29.2;
+    if (pct < 1) {
+      document.getElementById('race-result').textContent = `⚡ La lumière est déjà arrivée. Le son : ${elapsed.toFixed(1)}s…`;
+      requestAnimationFrame(animSon);
+    } else {
+      document.getElementById('race-result').textContent = '✅ Le son arrive après 29,2 secondes. La lumière était déjà là depuis 29 secondes et 999 millièmes !';
+      raceRunning = false;
+    }
+  }
+  setTimeout(animSon, 300);
+}
+
+// ══════════════════════════════════════════════
+// ACCORDÉON PHÉNOMÈNES
+// ══════════════════════════════════════════════
+function togglePheno(el) {
+  const detail = el.querySelector('.pheno-detail');
+  const isOpen = detail.classList.contains('open');
+  document.querySelectorAll('.pheno-detail').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.pheno-item').forEach(i => i.classList.remove('open'));
+  if (!isOpen) { detail.classList.add('open'); el.classList.add('open'); }
+}
+</script>
+</body>
+</html>
